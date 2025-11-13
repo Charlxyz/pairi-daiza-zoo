@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="w-full h-full relative">
+
+    <!-- Image de fond -->
+    <div class="relative">
+        <img class="w-full h-screen object-cover" src="{{ url_for('static', filename='images/img_acceuil.jpg') }}" alt="">
+    </div>
+
+    <!-- Menu de navigation -->
+    <nav class="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white/30 backdrop-blur-md text-white px-8 py-3 rounded-full shadow-lg flex space-x-6">
+        <a href="/" class="font-semibold px-4 py-2 rounded-md transition duration-300 hover:bg-green-500/70">Accueil</a>
+        <a href="/about" class="font-semibold px-4 py-2 rounded-md transition duration-300 hover:bg-green-500/70">À propos</a>
+    </nav>
+
+</body>
+</html>
