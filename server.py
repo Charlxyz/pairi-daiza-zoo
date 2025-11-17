@@ -17,13 +17,13 @@ login_manager = LoginManager(app)
 
 class User(db.Model, UserMixin): # Définir le modèle User
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
+    nom = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(20), nullable=False) # user, soigneur, admin
 
     def __repr__(self):
-        return f'<User {self.username}>'
+        return f'<User {self.nom}>'
 
 def login_required(f):
     @wraps(f)
@@ -77,27 +77,27 @@ def register():
         return redirect(url_for('index'))
     else:
         if request.method == "POST":
-            username = request.form['nom'] # Récupere le nom d'utilisateur inscrit dans le html
+            nom = request.form['nom'] # Récupere le nom d'utilisateur inscrit dans le html
             email = request.form['email'] # Récupere l'email inscrit dans le html
             password = request.form['mdp'] # Récupere le mot de passe inscrit dans le html
             check_password = request.form['mdp2'] # Récupere le le deuxieme mot de passe inscrit dans le html
 
-            print(username, email, password, check_password)
+            print(nom, email, password, check_password)
 
-            username_exists = User.query.filter_by(username=username).first() # Verrifie si le nom d'utlisateur existe deja
+            nom_exists = User.query.filter_by(nom=nom).first() # Verrifie si le nom d'utlisateur existe deja
             email_exists = User.query.filter_by(email=email).first() # Verrifie si l'adresse mail existe deja
             
-            if username_exists:
-                flash(f"{username} est dejà utiliser.", 'danger')
+            if nom_exists:
+                flash(f"{nom} est dejà utiliser.", 'danger')
             elif email_exists:
                 flash(f"{email} est dejà utiliser.", 'danger')
             elif password != check_password: # Verrifie si les deux mot de passe rentrés sont identiques
                 flash("Les mots de passe ne sont pas identiques.", 'danger')
             else:
-                if all(value not in ["", None, " "] for value in [username, email, password]):
+                if all(value not in ["", None, " "] for value in [nom, email, password]):
                     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8') # Hash le mot de passe de l'utilisateur pour le rendre indécriptable
                     user = User(
-                        username=username,
+                        nom=nom,
                         email=email,
                         password=hashed_password,
                         role='user'

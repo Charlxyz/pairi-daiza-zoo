@@ -1,3 +1,4 @@
 # pairi-daiza-zoo
-# pairi-daiza-zoo
-# pairi-daiza-zoo
+
+intaller le requirements: 
+`pip install -r requirements.txt`
