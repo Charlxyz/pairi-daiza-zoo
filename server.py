@@ -24,6 +24,14 @@ class User(db.Model, UserMixin): # Définir le modèle User
 
     def __repr__(self):
         return f'<User {self.nom}>'
+    
+class Animal:
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(80), unique=True, nullable=False)
+    enclot = db.Column(db.String(80), unique=True, nullable=False)
+    espèce = db.Column(db.String(80), unique=True, nullable=False)
+    arrive = db.Column(db.String(80), unique=True, nullable=False)
+    soin = db.Column(db.String(80), unique=True, nullable=False)
 
 def login_required(f):
     @wraps(f)
@@ -62,7 +70,7 @@ def login():
                 if user and bcrypt.check_password_hash(user.password, password): # check_password_hash() permet de comparé le mot de passe dans la base de donnees et celui rentre dans le html
                     login_user(user) # Connecte l'utilisateur on peut rajouter remember=True pour le garder connecter meme si il ferme son navigateur
                     flash("Connexion réussie !", 'success')
-                    return redirect(url_for('index')) # Redirige a la fonction index
+                    return redirect(url_for('acceuil')) # Redirige a la fonction index
                 else:
                     flash('Identifiants incorrects', 'danger')
             else:
@@ -116,7 +124,15 @@ def register():
 @app.route('/logout', methods=['POST'])
 @login_required
 def logout():
-    pass
+    if request.method == 'POST':
+        logout_user()
+        flash("Déconnexion réussie.", 'success')
+        return redirect(url_for('acceuil'))
+
+@app.route("/compte")
+@login_required
+def compte():
+    return render_template("compte.html")
 
 @app.route("/base", methods=["GET", "POST"])
 def base():
@@ -134,6 +150,14 @@ def base():
             resultat = "Erreur de saisie"
 
     return render_template("base.html", heure=heure, nombre=nombre, resultat=resultat)
+
+@app.route('/aniamls')
+def animal():
+    return render_template('animaux.html')
+
+# Création des tables de la base de donnee
+with app.app_context():
+    db.create_all()  # Crée les tables si elles n'existent pas
 
 if __name__ == "__main__":
     app.run(debug=True)
