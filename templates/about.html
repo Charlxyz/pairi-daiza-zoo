@@ -8,15 +8,7 @@
 </head>
 <body class="bg-gray-100 text-gray-800">
 
-    <nav class="bg-blue-600 text-white p-4">
-        <a href="/" class="mr-4 font-semibold">Accueil</a>
-        <a href="/about" class="font-semibold">À propos</a>
-    </nav>
-
-    <div class="max-w-xl mx-auto mt-10 bg-white shadow p-6 rounded text-center">
-        <h1 class="text-2xl font-bold mb-4">À propos</h1>
-        <p>Ce site est fait avec Flask et Tailwind CSS (via CDN).</p>
-    </div>
+    {% include '/components/nav.html' %}
 
 </body>
 </html>
