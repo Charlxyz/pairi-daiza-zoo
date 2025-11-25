@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Accueil</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 </head>
 
 <body class="w-full h-screen bg-[#EDE3E3]">
@@ -13,10 +16,12 @@
   {% include '/components/nav.html' %}
   <div class="w-full h-full relative">
     <img class="w-full absolute inset-0 object-cover" src="./static/images/Lion2.jpg" alt="bg">
-    <div class="absolute right-1/4 top-1/2 -translate-y-1/2 translate-x-20 text-4xl font-bold flex items-center flex-col">
+    <div
+      class="absolute right-1/4 top-1/2 -translate-y-1/2 translate-x-20 text-4xl font-bold flex items-center flex-col">
       <h1>Bienvenue</h1>
       <h2>Au zoo de Daiza Pairi</h2>
-      <button onclick="document.getElementById('page1').scrollIntoView({behavior: 'smooth'});" class="bg-green-500/70 rounded-lg p-2 text-white mt-5 cursor-pointer hover:bg-green-600/80 transition duration-300">
+      <button onclick="document.getElementById('page1').scrollIntoView({behavior: 'smooth'});"
+        class="bg-green-500/70 rounded-lg p-2 text-white mt-5 cursor-pointer hover:bg-green-600/80 transition duration-300">
         <i class="fa-solid fa-arrow-down"></i>
         Nous découvrir
         <i class="fa-solid fa-arrow-down"></i>
@@ -24,9 +29,45 @@
     </div>
   </div>
   <div id="page1" class="bg-[#EDE3E3] w-full h-96">
-
+    <div class="flex items-center justify-center">
+      <div id="calendrierEvent" class="w-[600px] h-[550px] bg-white p-4 rounded-lg">
+        <div id="calendar"></div>
+      </div>
+    </div>
   </div>
-  <div class="bg-[#EDE3E3] w-full h-96"></div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const calendarEl = document.getElementById("calendar");
+
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: "dayGridMonth",
+
+        events: "/api/events",   // récupération auto depuis Flask
+
+        selectable: true,
+        select: function (info) {
+          const title = prompt("Titre de l'événement :");
+
+          if (title) {
+            fetch("/api/events", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                title: title,
+                start: info.startStr,
+                end: info.endStr
+              })
+            }).then(() => {
+              calendar.refetchEvents(); // recharge les events
+            });
+          }
+        }
+      });
+
+      calendar.render();
+    });
+  </script>
 
 </body>
+
 </html>
