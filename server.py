@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, request
+from flask import Flask, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -176,6 +176,40 @@ def animal():
     else:
         animaux = Animal.query.all()
         return render_template("animaux.html", animaux=animaux)
+    
+@app.route("/api/events")
+def get_events():
+    events = Event.query.all()
+    result = [
+        {
+            "id": e.id,
+            "title": e.title,
+            "start": e.start,
+            "end": e.end
+        }
+        for e in events
+    ]
+    return jsonify(result)
+
+@app.route('/addevent', methods=['GET', 'POST'])
+@login_required
+def addevent():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        start = request.form.get('start')
+        end = request.form.get('end')
+
+        if not title or not start or not end:
+            flash('Tous les champs sont requis.', 'danger')
+            return redirect(url_for('addevent'))
+
+        new_event = Event(title=title, start=start, end=end)
+        db.session.add(new_event)
+        db.session.commit()
+        flash('Événement ajouté avec succès.', 'success')
+        return redirect(url_for('acceuil'))
+
+    return render_template('addevents.html')
 
 # Création des tables de la base de donnee
 with app.app_context():
