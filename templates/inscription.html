@@ -12,5 +12,46 @@
 
   {% include '/components/nav.html' %}
 
+ <!-- FORMULAIRE D’INSCRIPTION CENTRÉ -->
+  <div class="flex justify-center items-center h-[calc(100vh-5rem)]">
+    <form method="POST" class="bg-white shadow-xl p-8 rounded-lg w-96 space-y-4">
+      <h2 class="text-3xl font-bold text-center mb-4">Créer un compte</h2>
+
+      <div>
+        <label class="font-semibold">Nom complet</label>
+        <input type="text" name="nom" required
+               class="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-green-500">
+      </div>
+
+      <div>
+        <label class="font-semibold">Email</label>
+        <input type="email" name="email" required
+               class="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-green-500">
+      </div>
+
+      <div>
+        <label class="font-semibold">Mot de passe</label>
+        <input type="password" name="mdp" required
+               class="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-green-500">
+      </div>
+
+      <div>
+        <label class="font-semibold">Confirmer le mot de passe</label>
+        <input type="password" name="mdp2" required
+               class="w-full border p-2 rounded mt-1 focus:ring-2 focus:ring-green-500">
+      </div>
+
+      <button type="submit"
+              class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">
+        S'inscrire
+      </button>
+
+      <a href="/login"
+         class="block text-center text-green-700 font-semibold hover:underline mt-2">
+        Déjà un compte ? → Se connecter
+      </a>
+    </form>
+  </div>
+
 </body>
 </html>
