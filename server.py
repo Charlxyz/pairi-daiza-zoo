@@ -25,13 +25,19 @@ class User(db.Model, UserMixin): # Définir le modèle User
     def __repr__(self):
         return f'<User {self.nom}>'
     
-class Animal:
+class Animal(db.Model): # Définir le modèle Animal
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(80), unique=True, nullable=False)
     enclot = db.Column(db.String(80), unique=True, nullable=False)
     espèce = db.Column(db.String(80), unique=True, nullable=False)
     arrive = db.Column(db.String(80), unique=True, nullable=False)
     soin = db.Column(db.String(80), unique=True, nullable=False)
+
+class Event(db.Model): # Définir le modèle Event
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100))
+    start = db.Column(db.String(50))
+    end = db.Column(db.String(50))
 
 def login_required(f):
     @wraps(f)
@@ -89,8 +95,6 @@ def register():
             email = request.form['email'] # Récupere l'email inscrit dans le html
             password = request.form['mdp'] # Récupere le mot de passe inscrit dans le html
             check_password = request.form['mdp2'] # Récupere le le deuxieme mot de passe inscrit dans le html
-
-            print(nom, email, password, check_password)
 
             nom_exists = User.query.filter_by(nom=nom).first() # Verrifie si le nom d'utlisateur existe deja
             email_exists = User.query.filter_by(email=email).first() # Verrifie si l'adresse mail existe deja
@@ -151,9 +155,23 @@ def base():
 
     return render_template("base.html", heure=heure, nombre=nombre, resultat=resultat)
 
-@app.route('/aniamls')
+@app.route('/animals', methods=['GET', 'POST'])
 def animal():
-    return render_template('animaux.html')
+    if request.method == 'POST':
+        nom = request.form['nom']
+        enclot = request.form['enclot']
+        espece = request.form['espece']
+        arrive = request.form['arrive']
+        soin = request.form['soin']
+
+        new_animal = Animal(nom=nom, enclot=enclot, espèce=espece, arrive=arrive, soin=soin)
+        db.session.add(new_animal)
+        db.session.commit()
+        flash("Animal ajouté avec succès!", "success")
+        return redirect(url_for('animal'))
+    else:
+        animaux = Animal.query.all()
+        return render_template("animaux.html", animaux=animaux)
 
 # Création des tables de la base de donnee
 with app.app_context():
