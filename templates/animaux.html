@@ -25,7 +25,7 @@
 
         <!-- Carte animal -->
         {% for animau in animaux %}
-        <div class="bg-[#DEDEDE] rounded-xl shadow flex items-center p-6 relative">
+        <div id="animal-{{ animau.id }}" class="animal-card bg-[#DEDEDE] rounded-xl shadow flex items-center p-6 relative">
             
             <!-- Image -->
             <div class="w-32 h-32 bg-[#262626] rounded-xl flex items-center justify-center">
@@ -52,11 +52,19 @@
 
             <!-- Bouton Modifier -->
             {% if current_user.role == 'admin' or current_user.role == 'soigneur' %}
-                <button
-                    onclick="openModal('{{ animau.nom }}', '{{ animau.arrive }}', '{{ animau.espèce }}')"
-                    class="bg-green-400 hover:bg-green-500 transition text-white font-semibold px-6 py-2 rounded-lg absolute bottom-6 right-6">
-                    MODIFIER
-                </button>
+                <div class="absolute bottom-6 right-6 flex space-x-3">
+                    <button
+                        onclick="openModal('{{ animau.nom }}', '{{ animau.arrive }}', '{{ animau.espèce }}')"
+                        class="bg-green-400 hover:bg-green-500 transition text-white font-semibold px-6 py-2 rounded-lg">
+                        MODIFIER
+                    </button>
+
+                    <button
+                        onclick="deleteAnimal('{{ animau.id }}')"
+                        class="bg-red-500 hover:bg-red-600 transition text-white font-semibold px-6 py-2 rounded-lg">
+                        SUPPRIMER
+                    </button>
+                </div>
             {% endif %}
         </div>
         {% endfor %}
@@ -109,7 +117,7 @@
         class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
         <div class="bg-white p-6 rounded-xl shadow-xl w-[350px]">
             <h2 class="text-xl font-bold mb-4">Ajouter un animal</h2>
-            <form method="POST" action="/add_animals_api" class="space-y-4" enctype="multipart/form-data">
+            <form method="POST" action="/api/addanimal" class="space-y-4" enctype="multipart/form-data">
 
                 <div>
                     <label class="block font-semibold">Nom :</label>
@@ -184,6 +192,32 @@
     function closeAddModal() {
         document.getElementById("addModal").classList.add("hidden");
         document.getElementById("addModal").classList.remove("flex");
+    }
+</script>
+<script>
+    async function deleteAnimal(id) {
+        if (!confirm('Voulez-vous vraiment supprimer cet animal ?')) return;
+
+        try {
+            const res = await fetch(`/api/deleteanimal/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (res.ok) {
+                // remove the card from DOM
+                const el = document.getElementById(`animal-${id}`);
+                if (el) el.remove();
+            } else {
+                const data = await res.json().catch(() => ({}));
+                alert(data.error || 'Erreur lors de la suppression.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Impossible de contacter le serveur.');
+        }
     }
 </script>
 

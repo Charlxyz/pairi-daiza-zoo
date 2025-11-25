@@ -169,8 +169,8 @@ def animal():
         animaux = Animal.query.all()
         return render_template("animaux.html", animaux=animaux)
 
-@app.route('/add_animals_api', methods=['POST'])
-def add_animals_api():
+@app.route('/api/addanimal', methods=['POST'])
+def add_animals():
     nom = request.form['nom']
     race = request.form['race']
     enclot = request.form['enclot']
@@ -198,6 +198,32 @@ def add_animals_api():
     db.session.commit()
 
     return redirect(url_for('animal'))
+
+
+@app.route('/api/deleteanimal/<int:animal_id>', methods=['DELETE'])
+@login_required
+def delete_animal(animal_id):
+    # Only admin or soigneur can delete
+    if getattr(current_user, 'role', None) not in ['admin', 'soigneur']:
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    animal = db.session.get(Animal, animal_id)
+    if not animal:
+        return jsonify({'error': 'Animal not found'}), 404
+
+    # remove image file if exists
+    try:
+        if animal.image:
+            image_path = os.path.join(app.root_path, app.config.get('UPLOAD_FOLDER', 'static/uploads'), animal.image)
+            if os.path.exists(image_path):
+                os.remove(image_path)
+    except Exception:
+        pass
+
+    db.session.delete(animal)
+    db.session.commit()
+
+    return jsonify({'success': True}), 200
 
     
 @app.route("/api/events")
