@@ -142,23 +142,6 @@ def compte():
 def book():
     return render_template("reserver.html")
 
-@app.route("/base", methods=["GET", "POST"])
-def base():
-    heure = datetime.now().strftime("%H:%M:%S")
-    nombre = random.randint(1, 100)
-    resultat = None
-
-    # Si un formulaire a été soumis
-    if request.method == "POST":
-        try:
-            a = float(request.form.get("a", 0))
-            b = float(request.form.get("b", 0))
-            resultat = a + b
-        except ValueError:
-            resultat = "Erreur de saisie"
-
-    return render_template("base.html", heure=heure, nombre=nombre, resultat=resultat)
-
 @app.route('/animals', methods=['GET', 'POST'])
 def animal():
     if request.method == 'POST':
@@ -225,6 +208,10 @@ def deletevents():
     else:
         flash('Aucun événement sélectionné.', 'warning')
     return redirect(url_for('addevent'))
+
+@app.route("/events")
+def evenement():
+    return render_template("evenement.html")
 
 # Création des tables de la base de donnee
 with app.app_context():

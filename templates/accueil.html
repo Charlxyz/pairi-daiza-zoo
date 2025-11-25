@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  {% include '/components/calendar.html' %}
 </head>
 
 <body class="w-full h-screen bg-[#EDE3E3]">
@@ -35,38 +36,6 @@
       </div>
     </div>
   </div>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const calendarEl = document.getElementById("calendar");
-
-      const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: "dayGridMonth",
-
-        events: "/api/events",   // récupération auto depuis Flask
-
-        selectable: true,
-        select: function (info) {
-          const title = prompt("Titre de l'événement :");
-
-          if (title) {
-            fetch("/api/events", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                title: title,
-                start: info.startStr,
-                end: info.endStr
-              })
-            }).then(() => {
-              calendar.refetchEvents(); // recharge les events
-            });
-          }
-        }
-      });
-
-      calendar.render();
-    });
-  </script>
 
 </body>
 

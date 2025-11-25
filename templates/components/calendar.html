@@ -1,0 +1,32 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const calendarEl = document.getElementById("calendar");
+
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: "dayGridMonth",
+
+        events: "/api/events",   // récupération auto depuis Flask
+
+        selectable: true,
+        select: function (info) {
+          const title = prompt("Titre de l'événement :");
+
+          if (title) {
+            fetch("/api/events", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                title: title,
+                start: info.startStr,
+                end: info.endStr
+              })
+            }).then(() => {
+              calendar.refetchEvents(); // recharge les events
+            });
+          }
+        }
+      });
+
+      calendar.render();
+    });
+  </script>
