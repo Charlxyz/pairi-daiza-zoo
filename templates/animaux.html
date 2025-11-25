@@ -10,71 +10,45 @@
 
 <body class="w-full h-screen bg-[#EDE3E3]">
 
-  {% include '/components/nav.html' %}
-  <div class="w-full px-10 py-6 space-y-8">
+    {% include '/components/nav.html' %}
+
+    <div class="w-full px-10 py-6 space-y-8">
 
     <!-- Carte animal -->
-    <div class="bg-[#DEDEDE] rounded-xl shadow flex items-center p-6 relative">
-        
-        <!-- Image -->
-        <div class="w-32 h-32 bg-[#262626] rounded-xl flex items-center justify-center">
-            <i class="fas fa-image text-gray-300 text-4xl"></i>
+    {% for animau in animaux %}
+        <div class="bg-[#DEDEDE] rounded-xl shadow flex items-center p-6 relative">
+            
+            <!-- Image -->
+            <div class="w-32 h-32 bg-[#262626] rounded-xl flex items-center justify-center">
+                <i class="fas fa-image text-gray-300 text-4xl"></i>
+            </div>
+
+            <!-- Informations -->
+            <div class="ml-6 space-y-3">
+                <p>
+                    <span class="font-semibold">NOM :</span>
+                    <span class="text-gray-800">{{ animau.nom }}</span>
+                </p>
+
+                <p>
+                    <span class="font-semibold">ARRIVÉE :</span> {{ animau.arrive }}
+                    <span class="font-semibold ml-4">DÉPART :</span> 12-09-2025
+                </p>
+
+                <p>
+                    <span class="font-semibold">RACE :</span>
+                    <span class="text-gray-800">{{ animau.espèce }}</span>
+                </p>
+            </div>
+
+            <!-- Bouton Modifier -->
+            <button onclick="openModal()" class="bg-green-400 hover:bg-green-500 transition text-white font-semibold px-6 py-2 rounded-lg absolute bottom-6 right-6">
+                MODIFIER
+            </button>
         </div>
+    {% endfor %}
 
-        <!-- Informations -->
-        <div class="ml-6 space-y-3">
-            <p>
-                <span class="font-semibold">NOM :</span>
-                <span class="text-gray-800">BAMBOU</span>
-            </p>
-
-            <p>
-                <span class="font-semibold">ARRIVÉE :</span> 12-09-2025
-                <span class="font-semibold ml-4">DÉPART :</span> 12-09-2025
-            </p>
-
-            <p>
-                <span class="font-semibold">RACE :</span>
-                <span class="text-gray-800">TIGRE DE BANGALE</span>
-            </p>
-        </div>
-
-        <!-- Bouton Modifier -->
-        <button onclick="openModal()" 
-        class="bg-green-400 hover:bg-green-500 transition text-white font-semibold px-6 py-2 rounded-lg absolute bottom-6 right-6">
-    MODIFIER
-</button>
-
-
-        <!-- Badge N -->
-        <div class="w-10 h-10 bg-red-500 text-white flex items-center justify-center font-bold rounded-full absolute right-[-15px] top-1/2 -translate-y-1/2">
-            N
-        </div>
     </div>
-
-
-    <!-- Dupliquer la carte pour les autres animaux -->
-    <div class="bg-[#DEDEDE] rounded-xl shadow flex items-center p-6 relative">
-        <div class="w-32 h-32 bg-[#262626] rounded-xl flex items-center justify-center">
-            <i class="fas fa-image text-gray-300 text-4xl"></i>
-        </div>
-
-        <div class="ml-6 space-y-3">
-            <p><span class="font-semibold">NOM :</span> BAMBOU</p>
-            <p><span class="font-semibold">ARRIVÉE :</span> 12-09-2025 <span class="font-semibold ml-4">DÉPART :</span> 12-09-2025</p>
-            <p><span class="font-semibold">RACE :</span> TIGRE DE BANGALE</p>
-        </div>
-
-        <button class="bg-green-400 hover:bg-green-500 transition text-white font-semibold px-6 py-2 rounded-lg absolute bottom-6 right-6">
-            MODIFIER
-        </button>
-
-        <div class="w-10 h-10 bg-red-500 text-white flex items-center justify-center font-bold rounded-full absolute right-[-15px] top-1/2 -translate-y-1/2">
-            N
-        </div>
-    </div>
-
-</div>
 <!-- MODAL -->
 <div id="editModal" 
      class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
