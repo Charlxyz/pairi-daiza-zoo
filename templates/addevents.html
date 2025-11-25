@@ -8,7 +8,7 @@
 </head>
 <body class="w-full h-screen bg-[#EDE3E3]">
     {% include '/components/nav.html' %}
-    <div class="w-full mt-20 relative flex items-center justify-center">
+    <div class="w-full mt-20 relative flex items-center justify-center gap-6 px-4">
         <div class="w-full max-w-lg bg-white rounded-lg shadow p-6">
             <h1 class="text-2xl font-bold mb-4">Ajouter un événement</h1>
 
@@ -37,6 +37,95 @@
                 </div>
             </form>
         </div>
+        <div class="w-full max-w-lg bg-white rounded-lg shadow p-6">
+            <h1 class="text-2xl font-bold mb-4">Supprimer des événements</h1>
+
+            <div id="eventsList" class="space-y-4">
+                <div class="text-center text-gray-500">Chargement des événements...</div>
+            </div>
+        </div>
     </div>
+
+    <script>
+        async function loadEvents() {
+            try {
+                const response = await fetch('/api/events');
+                const events = await response.json();
+                const eventsList = document.getElementById('eventsList');
+                
+                if (events.length === 0) {
+                    eventsList.innerHTML = '<p class="text-gray-600">Aucun événement disponible.</p>';
+                    return;
+                }
+
+                const form = document.createElement('form');
+                form.method = 'post';
+                form.action = '{{ url_for("deletevents") }}';
+                form.className = 'space-y-4';
+
+                const eventsContainer = document.createElement('div');
+                eventsContainer.className = 'max-h-96 overflow-y-auto border rounded p-4 space-y-2';
+
+                events.forEach(event => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center p-2 bg-gray-50 rounded';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `event_${event.id}`;
+                    checkbox.name = 'event_ids';
+                    checkbox.value = event.id;
+                    checkbox.className = 'mr-3';
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = `event_${event.id}`;
+                    label.className = 'flex-1 cursor-pointer';
+                    
+                    const title = document.createElement('div');
+                    title.className = 'font-semibold';
+                    title.textContent = event.title;
+                    
+                    const times = document.createElement('div');
+                    times.className = 'text-sm text-gray-600';
+                    times.textContent = `${event.start} → ${event.end}`;
+                    
+                    label.appendChild(title);
+                    label.appendChild(times);
+                    
+                    div.appendChild(checkbox);
+                    div.appendChild(label);
+                    eventsContainer.appendChild(div);
+                });
+
+                const buttons = document.createElement('div');
+                buttons.className = 'flex items-center justify-between';
+                
+                const submitBtn = document.createElement('button');
+                submitBtn.type = 'submit';
+                submitBtn.className = 'bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600';
+                submitBtn.textContent = 'Supprimer sélectionnés';
+                
+                const cancelLink = document.createElement('a');
+                cancelLink.href = '{{ url_for("acceuil") }}';
+                cancelLink.className = 'text-sm text-gray-600 hover:underline';
+                cancelLink.textContent = 'Annuler';
+                
+                buttons.appendChild(submitBtn);
+                buttons.appendChild(cancelLink);
+                
+                form.appendChild(eventsContainer);
+                form.appendChild(buttons);
+                
+                eventsList.innerHTML = '';
+                eventsList.appendChild(form);
+            } catch (error) {
+                console.error('Erreur lors du chargement des événements:', error);
+                document.getElementById('eventsList').innerHTML = '<p class="text-red-600">Erreur lors du chargement des événements.</p>';
+            }
+        }
+
+        // Charger les événements au chargement de la page
+        loadEvents();
+    </script>
 </body>
 </html>

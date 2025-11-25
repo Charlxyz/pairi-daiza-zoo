@@ -207,9 +207,24 @@ def addevent():
         db.session.add(new_event)
         db.session.commit()
         flash('Événement ajouté avec succès.', 'success')
-        return redirect(url_for('acceuil'))
+        return redirect(url_for('addevent'))
 
     return render_template('addevents.html')
+
+@app.route('/deletevents', methods=['POST'])
+@login_required
+def deletevents():
+    event_ids = request.form.getlist('event_ids')
+    if event_ids:
+        for event_id in event_ids:
+            event = Event.query.get(int(event_id))
+            if event:
+                db.session.delete(event)
+        db.session.commit()
+        flash(f'{len(event_ids)} événement(s) supprimé(s) avec succès.', 'success')
+    else:
+        flash('Aucun événement sélectionné.', 'warning')
+    return redirect(url_for('addevent'))
 
 # Création des tables de la base de donnee
 with app.app_context():
