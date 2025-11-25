@@ -3,8 +3,8 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, curren
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from functools import wraps
-from datetime import datetime
-import random
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bdd.db'
@@ -14,6 +14,11 @@ app.secret_key = '\xf0?a\x9a\\\xff\xd4;\x0c\xcbHi'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
+
+# UPLOAD FOLDER CONFIGURATION
+UPLOAD_FOLDER_ANIMAL = "static/uploads"
+ALLOWED_EXTENSIONS_ANIMAL = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_ANIMAL
 
 class User(db.Model, UserMixin): # Définir le modèle User
     id = db.Column(db.Integer, primary_key=True)
@@ -27,11 +32,13 @@ class User(db.Model, UserMixin): # Définir le modèle User
     
 class Animal(db.Model): # Définir le modèle Animal
     id = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String(80), unique=True, nullable=False)
-    enclot = db.Column(db.String(80), unique=True, nullable=False)
-    espèce = db.Column(db.String(80), unique=True, nullable=False)
-    arrive = db.Column(db.String(80), unique=True, nullable=False)
-    soin = db.Column(db.String(80), unique=True, nullable=False)
+    nom = db.Column(db.String(80), nullable=False)
+    enclot = db.Column(db.String(80), nullable=False)
+    espèce = db.Column(db.String(80), nullable=False)
+    arrive = db.Column(db.String(80), nullable=False)
+    depart = db.Column(db.String(80))
+    soin = db.Column(db.String(80))
+    image = db.Column(db.String(200))
 
 class Event(db.Model): # Définir le modèle Event
     id = db.Column(db.Integer, primary_key=True)
@@ -47,6 +54,9 @@ def login_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)        
     return decorated_function
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS_ANIMAL
 
 @login_manager.user_loader # Charge l'utilisateur si il se connecte
 def load_user(id):
@@ -64,7 +74,7 @@ def about():
 def login():
     if current_user.is_authenticated:
         flash('Vous etes deja connecter !', 'danger')
-        return redirect(url_for('index'))
+        return redirect(url_for('acceuil'))
     else:
         if request.method == 'POST':
             email = request.form['identifiant'] # Récupere l'email inscrit dans le html
@@ -125,13 +135,12 @@ def register():
 
     return render_template("inscription.html")
 
-@app.route('/logout', methods=['POST'])
+@app.route('/logout')
 @login_required
 def logout():
-    if request.method == 'POST':
-        logout_user()
-        flash("Déconnexion réussie.", 'success')
-        return redirect(url_for('acceuil'))
+    logout_user()
+    flash("Déconnexion réussie.", 'success')
+    return redirect(url_for('acceuil'))
 
 @app.route("/compte")
 @login_required
@@ -159,6 +168,37 @@ def animal():
     else:
         animaux = Animal.query.all()
         return render_template("animaux.html", animaux=animaux)
+
+@app.route('/add_animals_api', methods=['POST'])
+def add_animals_api():
+    nom = request.form['nom']
+    race = request.form['race']
+    enclot = request.form['enclot']
+    arrive = request.form['arrive']
+    depart = request.form.get('depart')
+
+    image = request.files.get('file')
+    image_filename = None
+
+    if image and image.filename != '':
+        filename = secure_filename(image.filename)
+        image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        image.save(image_path)
+        image_filename = filename
+
+    nouvel_animal = Animal(
+        nom=nom,
+        espèce=race,
+        enclot=enclot,
+        arrive=arrive,
+        depart=depart,
+        image=image_filename
+    )
+    db.session.add(nouvel_animal)
+    db.session.commit()
+
+    return redirect(url_for('animal'))
+
     
 @app.route("/api/events")
 def get_events():

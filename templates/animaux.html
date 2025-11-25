@@ -6,6 +6,7 @@
   <title>Accueil</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="icon" href="../static/images/logo2.png" type="image/x-icon">
 </head>
 
 <body class="w-full h-screen bg-[#EDE3E3]">
@@ -14,13 +15,21 @@
 
     <div class="w-full px-10 py-6 space-y-8">
 
+        {% if current_user.role == 'admin' or current_user.role == 'soigneur' %}
+        <button
+            onclick="openAddModal()"
+            class="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white">
+            ➕ Ajouter un animal
+        </button>
+        {% endif %}
+
         <!-- Carte animal -->
         {% for animau in animaux %}
         <div class="bg-[#DEDEDE] rounded-xl shadow flex items-center p-6 relative">
             
             <!-- Image -->
             <div class="w-32 h-32 bg-[#262626] rounded-xl flex items-center justify-center">
-                <i class="fas fa-image text-gray-300 text-4xl"></i>
+                <img src="{{ url_for('static', filename='uploads/' + animau.image) }}" alt="photo animal" width="128" height="128" class="object-cover rounded-xl">
             </div>
 
             <!-- Informations -->
@@ -32,7 +41,7 @@
 
                 <p>
                     <span class="font-semibold">ARRIVÉE :</span> {{ animau.arrive }}
-                    <span class="font-semibold ml-4">DÉPART :</span> 12-09-2025
+                    <span class="font-semibold ml-4">DÉPART :</span> {{ animau.depart if animau.depart else 'N/A' }}
                 </p>
 
                 <p>
@@ -42,11 +51,13 @@
             </div>
 
             <!-- Bouton Modifier -->
-            <button
-                onclick="openModal('{{ animau.nom }}', '{{ animau.arrive }}', '{{ animau.espèce }}')"
-                class="bg-green-400 hover:bg-green-500 transition text-white font-semibold px-6 py-2 rounded-lg absolute bottom-6 right-6">
-                MODIFIER
-            </button>
+            {% if current_user.role == 'admin' or current_user.role == 'soigneur' %}
+                <button
+                    onclick="openModal('{{ animau.nom }}', '{{ animau.arrive }}', '{{ animau.espèce }}')"
+                    class="bg-green-400 hover:bg-green-500 transition text-white font-semibold px-6 py-2 rounded-lg absolute bottom-6 right-6">
+                    MODIFIER
+                </button>
+            {% endif %}
         </div>
         {% endfor %}
 
@@ -55,12 +66,9 @@
     <!-- UN SEUL MODAL -->
     <div id="editModal" 
          class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
-
         <div class="bg-white p-6 rounded-xl shadow-xl w-[350px]">
             <h2 class="text-xl font-bold mb-4">Modifier l'animal</h2>
-
             <form class="space-y-4">
-
                 <div>
                     <label class="block font-semibold">Nom :</label>
                     <input id="modal-nom" type="text" class="w-full border rounded-lg px-3 py-2">
@@ -92,10 +100,63 @@
                         Enregistrer
                     </button>
                 </div>
-
             </form>
         </div>
     </div>
+
+    <!-- MODAL AJOUT ANIMAL -->
+    <div id="addModal" 
+        class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-xl shadow-xl w-[350px]">
+            <h2 class="text-xl font-bold mb-4">Ajouter un animal</h2>
+            <form method="POST" action="/add_animals_api" class="space-y-4" enctype="multipart/form-data">
+
+                <div>
+                    <label class="block font-semibold">Nom :</label>
+                    <input name="nom" id="add-nom" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="Ex : Simba">
+                </div>
+
+                <div>
+                    <label class="block font-semibold">Arrivée :</label>
+                    <input name="arrive" id="add-arrivee" type="date" class="w-full border rounded-lg px-3 py-2">
+                </div>
+
+                <div>
+                    <label class="block font-semibold">Départ (optionnel) :</label>
+                    <input name="depart" id="add-depart" type="date" class="w-full border rounded-lg px-3 py-2">
+                </div>
+
+                <div>
+                    <label class="block font-semibold">Enclôt :</label>
+                    <input name="enclot" id="add-enclot" type="text" class="w-full border rounded-lg px-3 py-2">
+                </div>
+
+                <div>
+                    <label class="block font-semibold">Race :</label>
+                    <input name="race" id="add-race" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="Ex : Tigre">
+                </div>
+
+                <div>
+                    <label class="block font-semibold">Photo :</label>
+                    <input name="file" id="add-file" type="file" class="w-full border rounded-lg px-3 py-2 mb-2" accept="image/*">
+                </div>
+
+                <div class="flex justify-between pt-2">
+                    <button type="button" onclick="closeAddModal()" 
+                            class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">
+                        Annuler
+                    </button>
+
+                    <button type="submit" 
+                            class="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white">
+                        Ajouter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
 
 <script>
     function openModal(nom, arrivee, race) {
@@ -114,6 +175,19 @@
         modal.classList.remove("flex");
     }
 </script>
+<script>
+    function openAddModal() {
+        document.getElementById("addModal").classList.remove("hidden");
+        document.getElementById("addModal").classList.add("flex");
+    }
+
+    function closeAddModal() {
+        document.getElementById("addModal").classList.add("hidden");
+        document.getElementById("addModal").classList.remove("flex");
+    }
+</script>
+
+
 
 </body>
 </html>
