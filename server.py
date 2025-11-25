@@ -139,7 +139,7 @@ def compte():
     return render_template("compte.html")
 
 @app.route("/book")
-def compte():
+def book():
     return render_template("reserver.html")
 
 @app.route("/base", methods=["GET", "POST"])
