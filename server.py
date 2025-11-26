@@ -178,6 +178,17 @@ def compte():
     tickets = Tickets.query.filter_by(user_id=current_user.id).all()
     return render_template("compte.html", tickets=tickets)
 
+@app.route("/checktickets")
+@login_required
+def checktickets():
+    return render_template("checktickets.html")
+
+@app.route('/check_ticket/<string:ticket_uuid>')
+def check_ticket(ticket_uuid):
+    ticket = Tickets.query.filter_by(uuid=ticket_uuid).first()
+    is_valid = ticket is not None and ticket.validite == "True"
+    return jsonify({"valid": is_valid})
+
 @app.route("/book")
 def book():
     return render_template("reserver.html")
