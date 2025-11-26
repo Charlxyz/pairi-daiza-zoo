@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="../static/images/logo2.png" type="image/x-icon">
 </head>
+
 <body class="w-full min-h-screen bg-[#EDE3E3]">
 
     {% include '/components/nav.html' %}
@@ -23,23 +24,28 @@
                         <th class="py-3 px-4 text-left">Soigneur</th>
                         <th class="py-3 px-4 text-left">Catégorie</th>
                         <th class="py-3 px-4 text-left">Date</th>
-                        <th class="py-3 px-4 text-left">Commentaire</th>
+                        <th class="py-3 px-4 text-left">Description</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {% if soins %}
                         {% for soin in soins %}
                         <tr class="border-b hover:bg-gray-100 transition">
-                            <td class="py-3 px-4">{{ soin.animal }}</td>
-                            <td class="py-3 px-4">{{ soin.soigneur }}</td>
+                            <td class="py-3 px-4 font-semibold">{{ soin.animal.nom }}</td>
+                            <td class="py-3 px-4">{{ soin.soigneur.nom }} {{ soin.soigneur.prenom }}</td>
                             <td class="py-3 px-4">{{ soin.categorie }}</td>
-                            <td class="py-3 px-4">{{ soin.date }}</td>
-                            <td class="py-3 px-4">{{ soin.commentaire or "Aucun" }}</td>
+                            <td class="py-3 px-4">
+                                {{ soin.date.strftime('%d/%m/%Y') }}
+                            </td>
+                            <td class="py-3 px-4">{{ soin.description }}</td>
                         </tr>
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="5" class="text-center py-4 text-gray-500">Aucun soin enregistré</td>
+                            <td colspan="5" class="text-center py-6 text-gray-500 font-semibold">
+                                Aucun soin enregistré
+                            </td>
                         </tr>
                     {% endif %}
                 </tbody>
@@ -48,6 +54,70 @@
     </div>
 
     {% include '/components/flash.html' %}
+
+    {% if current_user.role in ['admin', 'soigneur'] %}
+    <button
+        onclick="document.getElementById('modalAddSoin').classList.remove('hidden')"
+        class="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white rounded-full w-14 h-14 
+               shadow-lg flex items-center justify-center text-2xl transition"
+    >
+        <i class="fa-solid fa-plus"></i>
+    </button>
+    {% endif %}
+
+    <!-- MODALE AJOUT SOIN -->
+    <div id="modalAddSoin"
+         class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-lg w-[450px] p-6">
+            <h2 class="text-2xl font-bold mb-4 text-center">Ajouter un soin</h2>
+
+            <form action="{{ url_for('add_soins') }}" method="POST">
+
+                <!-- Animal -->
+                <label class="block font-semibold mt-2">Animal :</label>
+                <select name="animal_id" class="w-full p-2 border rounded-lg" required>
+                    {% for animal in animaux %}
+                        <option value="{{ animal.id }}">{{ animal.nom }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Soigneur -->
+                <label class="block font-semibold mt-2">Soigneur :</label>
+                <select name="soigneur_id" class="w-full p-2 border rounded-lg" required>
+                    {% for soigneur in soigneurs %}
+                        <option value="{{ soigneur.id }}">{{ soigneur.nom }} {{ soigneur.prenom }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- Catégorie -->
+                <label class="block font-semibold mt-2">Catégorie :</label>
+                <input type="text" name="categorie" class="w-full p-2 border rounded-lg" placeholder="Ex : Vaccination" required>
+
+                <!-- Description -->
+                <label class="block font-semibold mt-2">Description :</label>
+                <textarea name="description" class="w-full p-2 border rounded-lg" placeholder="Détails du soin..." required></textarea>
+
+                <!-- Date -->
+                <label class="block font-semibold mt-2">Date :</label>
+                <input type="date" name="date" class="w-full p-2 border rounded-lg" required
+                       value="{{ datetime.utcnow().strftime('%Y-%m-%d') }}">
+
+                <!-- Actions -->
+                <div class="mt-5 flex justify-between">
+                    <button type="button"
+                            onclick="document.getElementById('modalAddSoin').classList.add('hidden')"
+                            class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg">
+                        Annuler
+                    </button>
+
+                    <button type="submit"
+                            class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">
+                        Ajouter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 </body>
 </html>

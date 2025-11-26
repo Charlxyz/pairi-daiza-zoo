@@ -421,7 +421,41 @@ def evenement():
 
 @app.route("/soins")
 def soins():
-    return render_template("soins.html")
+    soins = Soin.query.all()
+    animaux = Animal.query.all()
+    soigneurs = Soigneur.query.all()
+    return render_template("soins.html", soins=soins, animaux=animaux, soigneurs=soigneurs, datetime=datetime)
+
+@app.route("/api/addsoins", methods=['POST', 'GET'])
+def add_soins():
+    if request.method == 'GET':
+        flash('Méthode non autorisée.', 'danger')
+        return redirect(url_for('soins'))
+
+    if current_user.role not in ['admin', 'soigneur']:
+        flash("Vous n'êtes pas autorisé à ajouter des soins.", 'danger')
+        return redirect(url_for('soins'))
+
+    description = request.form['description']
+    categorie = request.form['categorie']
+    date_str = request.form['date']
+    animal_id = request.form['animal_id']
+    soigneur_id = request.form['soigneur_id']
+
+    date = datetime.strptime(date_str, "%Y-%m-%d").date()
+
+    nouvel_soin = Soin(
+        description=description,
+        categorie=categorie,
+        date=date,
+        animal_id=animal_id,
+        soigneur_id=soigneur_id
+    )
+    db.session.add(nouvel_soin)
+    db.session.commit()
+    flash("Soin ajouté avec succès.", 'success')
+
+    return redirect(url_for('soins'))
 
 @app.errorhandler(404)
 def page_not_found(e):
