@@ -77,13 +77,20 @@
                 <p><strong>Statut :</strong> Accepté - Ticket marqué comme utilisé</p>
             `;
         } else if (data.valid === false) {
-            modalTitle.textContent = "❌ Ticket Invalide";
-            modalTitle.className = "text-2xl font-bold mb-4 text-red-600";
-            const reason = data.message || "Raison inconnue";
-            modalContent.innerHTML = `
-                <p><strong>UUID :</strong> ${uuid}</p>
-                <p><strong>Raison :</strong> ${reason}</p>
-            `;
+            if (date.type === "date_invalid") {
+                modalTitle.textContent = "❌ Date incorecte";
+                modalTitle.className = "text-2xl font-bold mb-4 text-orange-600";
+                modalContent.innerHTML = `
+                    <p><strong>Raison :</strong> ${reason}</p>
+                `;
+            } else {
+                modalTitle.textContent = "❌ Ticket Invalide";
+                modalTitle.className = "text-2xl font-bold mb-4 text-red-600";
+                const reason = data.message || "Raison inconnue";
+                modalContent.innerHTML = `
+                    <p><strong>Raison :</strong> ${reason}</p>
+                `;
+            }
         } else {
             modalTitle.textContent = "⚠️ Erreur";
             modalTitle.className = "text-2xl font-bold mb-4 text-yellow-600";

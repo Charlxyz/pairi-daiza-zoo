@@ -229,7 +229,8 @@ def check_ticket(ticket_uuid):
     if date_visite != today:
         return jsonify({
             "valid": False,
-            "message": f"Date invalide (prévu pour {date_visite.strftime('%d/%m/%Y')})"
+            "type": "date_invalid",
+            "message": f"Prévu pour {date_visite.strftime('%d/%m/%Y')}"
         })
     
     # Ticket valide : le marquer comme usé et retourner succès
