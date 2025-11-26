@@ -47,7 +47,7 @@
                 <p>
                     <span class="font-semibold">RACE :</span>
                     <span class="text-gray-800">{{ animau.espèce }}</span>
-                    
+
                     <span class="font-semibold">ENCLÔT :</span>
                     <span class="text-gray-800">{{ animau.enclot if animau.enclot else 'N/A' }}</span>
                 </p>
@@ -163,6 +163,8 @@
             </form>
         </div>
     </div>
+
+    {% include '/components/flash.html' %}
 
     <!-- SCRIPTS -->
     <script>

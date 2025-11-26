@@ -1,0 +1,43 @@
+<!-- CONTAINER NOTIFS -->
+<div id="flash-container" class="fixed bottom-4 right-4 space-y-3 z-50"></div>
+
+<!-- RÉCUPÉRATION DES MESSAGES FLASH -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <script>
+            const messages = {{ messages|tojson }};
+        </script>
+    {% endif %}
+{% endwith %}
+
+<!-- SCRIPT D’AFFICHAGE DES NOTIFS -->
+<script>
+if (typeof messages !== "undefined") {
+    messages.forEach(([category, message]) => {
+    const notif = document.createElement('div');
+    notif.className = `
+        px-4 py-2 rounded-lg shadow-lg opacity-0 transition duration-500
+        flex items-center space-x-2
+        ${category === 'success' ? 'bg-green-500 text-white' : ''}
+        ${category === 'erreur' ? 'bg-red-500 text-white' : ''}
+        ${category === 'danger' ? 'bg-yellow-500 text-black' : ''}
+        ${!['success', 'error', 'warning'].includes(category) ? 'bg-gray-500 text-white' : ''}
+    `;
+    notif.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()" class="text-white/80 hover:text-white">
+        <i class="fa-solid fa-xmark"></i>
+        </button>
+    `;
+
+    document.getElementById('flash-container').appendChild(notif);
+
+    setTimeout(() => notif.style.opacity = 1, 100);
+
+    setTimeout(() => {
+        notif.style.opacity = 0;
+        setTimeout(() => notif.remove(), 500);
+    }, 7500);
+    });
+}
+</script>
