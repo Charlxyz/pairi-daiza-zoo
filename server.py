@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from functools import wraps
 from werkzeug.utils import secure_filename
-import os
+import os, uuid
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bdd.db'
@@ -292,11 +292,11 @@ def get_events():
 @app.route('/addevent', methods=['GET', 'POST'])
 @login_required
 def addevent():
-    if request.method == 'POST':
-        if current_user.role not in ['admin', 'soigneur']:
-            flash("Vous n'êtes pas autorisé à ajouter des événements.", 'danger')
-            return redirect(url_for('addevent'))
+    if current_user.role not in ['admin', 'soigneur']:
+        flash("Vous n'êtes pas autorisé à ajouter des événements.", 'danger')
+        return redirect(url_for('addevent'))
 
+    if request.method == 'POST':
         title = request.form.get('title')
         start = request.form.get('start')
         end = request.form.get('end')
@@ -335,6 +335,33 @@ def deletevents():
     else:
         flash('Aucun événement sélectionné.', 'warning')
     return redirect(url_for('addevent'))
+
+@app.route("/api/newtickets", methods=['POST', 'GET'])
+@login_required
+def new_tickets():
+    if request.method == 'POST':
+        nom = request.form['nom']
+        prénom = request.form['prénom']
+        categore = request.form['categore']
+        date = request.form['date']
+
+        uuid_str = str(uuid.uuid4())
+
+        nouveau_ticket = Tickets(
+            nom=nom,
+            prenom=prénom,
+            uuid=uuid_str,
+            validite="True",
+            date_visite=date,
+            categorie=categore,
+            user_id=current_user.id
+        )
+        db.session.add(nouveau_ticket)
+        db.session.commit()
+        flash("Ticket créé avec succès.", 'success')
+        return redirect(url_for('compte'))
+    
+    return render_template(url_for('compte'))
 
 @app.route("/events")
 def evenement():
