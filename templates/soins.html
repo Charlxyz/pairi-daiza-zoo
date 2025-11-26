@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Derniers soins</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="../static/images/logo2.png" type="image/x-icon">
+</head>
+<body class="w-full min-h-screen bg-[#EDE3E3]">
+
+    {% include '/components/nav.html' %}
+
+    <div class="py-8 px-10">
+        <h1 class="text-4xl font-bold text-center mb-6">Derniers soins par animal</h1>
+
+        <div class="overflow-x-auto shadow-lg rounded-xl">
+            <table class="min-w-full bg-white rounded-lg">
+                <thead class="bg-green-600 text-white">
+                    <tr>
+                        <th class="py-3 px-4 text-left">Animal</th>
+                        <th class="py-3 px-4 text-left">Soigneur</th>
+                        <th class="py-3 px-4 text-left">Catégorie</th>
+                        <th class="py-3 px-4 text-left">Date</th>
+                        <th class="py-3 px-4 text-left">Commentaire</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if soins %}
+                        {% for soin in soins %}
+                        <tr class="border-b hover:bg-gray-100 transition">
+                            <td class="py-3 px-4">{{ soin.animal }}</td>
+                            <td class="py-3 px-4">{{ soin.soigneur }}</td>
+                            <td class="py-3 px-4">{{ soin.categorie }}</td>
+                            <td class="py-3 px-4">{{ soin.date }}</td>
+                            <td class="py-3 px-4">{{ soin.commentaire or "Aucun" }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-gray-500">Aucun soin enregistré</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% include '/components/flash.html' %}
+
+</body>
+</html>

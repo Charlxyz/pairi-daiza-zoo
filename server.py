@@ -26,6 +26,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER_ANIMAL
 class User(db.Model, UserMixin): # Définir le modèle User
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(80), unique=True, nullable=False)
+    prenom = db.Column(db.String(80))
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(20), nullable=False) # user, soigneur, admin
@@ -59,6 +60,24 @@ class Tickets(db.Model): # Définir le modèle Tickets
     categorie = db.Column(db.String(50), nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class Soin(db.Model): # Définir le modèle Soin
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(200), nullable=False)
+    categorie = db.Column(db.String(100), nullable=False)  # Vaccination, Contrôle, Médical...
+    date = db.Column(db.Date, nullable=False)
+
+    animal_id = db.Column(db.Integer, db.ForeignKey('animal.id'), nullable=False)
+    soigneur_id = db.Column(db.Integer, db.ForeignKey('soigneur.id'), nullable=False)
+
+    # Relations
+    animal = db.relationship('Animal', backref='soins', lazy=True)
+    soigneur = db.relationship('Soigneur', backref='soins', lazy=True)
+
+class Soigneur(db.Model): # Définir le modèle Soigneur
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(80), nullable=False)
+    prenom = db.Column(db.String(80), nullable=False)
 
 def login_required(f):
     @wraps(f)
@@ -122,6 +141,7 @@ def register():
     else:
         if request.method == "POST":
             nom = request.form['nom'] # Récupere le nom d'utilisateur inscrit dans le html
+            prenom = request.form['prenom'] if request.form['prenom'] else "" # Récupere le prenom d'utilisateur inscrit dans le html
             email = request.form['email'] # Récupere l'email inscrit dans le html
             password = request.form['mdp'] # Récupere le mot de passe inscrit dans le html
             check_password = request.form['mdp2'] # Récupere le le deuxieme mot de passe inscrit dans le html
@@ -140,6 +160,7 @@ def register():
                     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8') # Hash le mot de passe de l'utilisateur pour le rendre indécriptable
                     user = User(
                         nom=nom,
+                        prenom=prenom,
                         email=email,
                         password=hashed_password,
                         role='user'
