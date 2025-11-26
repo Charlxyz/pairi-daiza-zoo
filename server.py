@@ -5,6 +5,7 @@ from flask_bcrypt import Bcrypt
 from functools import wraps
 from werkzeug.utils import secure_filename
 import os, uuid
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bdd.db'
@@ -72,6 +73,12 @@ def allowed_file(filename):
 @login_manager.user_loader # Charge l'utilisateur si il se connecte
 def load_user(id):
     return db.session.get(User, int(id))
+
+@app.template_filter('date_humaine')
+def date_humaine(value):
+    if isinstance(value, str):
+        value = datetime.strptime(value, "%Y-%m-%d")
+    return value.strftime("%d %B %Y")  # ex : 27 novembre 2025
 
 @app.route("/")
 def acceuil():
@@ -156,7 +163,8 @@ def logout():
 @app.route("/compte")
 @login_required
 def compte():
-    return render_template("compte.html")
+    tickets = Tickets.query.filter_by(user_id=current_user.id).all()
+    return render_template("compte.html", tickets=tickets)
 
 @app.route("/book")
 def book():
