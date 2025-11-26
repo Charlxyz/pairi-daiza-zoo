@@ -342,7 +342,7 @@ def new_tickets():
     if request.method == 'POST':
         nom = request.form['nom']
         prénom = request.form['prenom']
-        categore = request.form['categore']
+        categorie = request.form['categorie']
         date = request.form['date']
 
         uuid_str = str(uuid.uuid4())
@@ -353,7 +353,7 @@ def new_tickets():
             uuid=uuid_str,
             validite="True",
             date_visite=date,
-            categorie=categore,
+            categorie=categorie,
             user_id=current_user.id
         )
         db.session.add(nouveau_ticket)
