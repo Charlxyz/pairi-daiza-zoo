@@ -156,8 +156,17 @@ def animal():
     animaux = Animal.query.all()
     return render_template("animaux.html", animaux=animaux)
 
-@app.route('/api/addanimal', methods=['POST'])
+@app.route('/api/addanimal', methods=['POST', 'GET'])
+@login_required
 def add_animals():
+    if request.method == 'GET':
+        flash('Méthode non autorisée.', 'danger')
+        return redirect(url_for('animal'))
+
+    if current_user.role not in ['admin', 'soigneur']:
+        flash("Vous n'êtes pas autorisé à ajouter des animaux.", 'danger')
+        return redirect(url_for('animal'))
+
     nom = request.form['nom']
     race = request.form['race']
     enclot = request.form['enclot']
@@ -187,16 +196,21 @@ def add_animals():
     return redirect(url_for('animal'))
 
 
-@app.route('/api/deleteanimal/<int:animal_id>', methods=['DELETE'])
+@app.route('/api/deleteanimal/<int:animal_id>', methods=['DELETE', 'GET', 'POST'])
 @login_required
 def delete_animal(animal_id):
-    # Only admin or soigneur can delete
-    if getattr(current_user, 'role', None) not in ['admin', 'soigneur']:
-        return jsonify({'error': 'Unauthorized'}), 403
+    if request.method != 'DELETE':
+        flash('Méthode non autorisée.', 'danger')
+        return redirect(url_for('animal'))
+
+    if current_user.role not in ['admin', 'soigneur']:
+        flash("Vous n'êtes pas autorisé à supprimer cet animal.", 'danger')
+        return redirect(url_for('animal'))
 
     animal = db.session.get(Animal, animal_id)
     if not animal:
-        return jsonify({'error': 'Animal not found'}), 404
+        flash('Animal non trouvé.', 'erreur')
+        return redirect(url_for('animal'))
 
     # remove image file if exists
     try:
@@ -209,19 +223,23 @@ def delete_animal(animal_id):
 
     db.session.delete(animal)
     db.session.commit()
+    flash('Animal supprimé avec succès.', 'success')
 
-    return jsonify({'success': True}), 200
-
-@app.route('/api/editanimal/<int:animal_id>', methods=['POST'])
+@app.route('/api/editanimal/<int:animal_id>', methods=['POST', 'GET'])
 @login_required
 def edit_animal(animal_id):
+    if request.method == 'GET':
+        flash('Méthode non autorisée.', 'danger')
+        return redirect(url_for('animal'))
+
     animal = db.session.get(Animal, animal_id)
     if not animal:
-        return jsonify({'error': 'Animal not found'}), 404
+        flash('Animal non trouvé.', 'erreur')
+        return redirect(url_for('animal'))
 
-    # Only admin or soigneur can edit
-    if getattr(current_user, 'role', None) not in ['admin', 'soigneur']:
-        return jsonify({'error': 'Unauthorized'}), 403
+    if current_user.role not in ['admin', 'soigneur']:
+        flash("Vous n'êtes pas autorisé à modifier cet animal.", 'danger')
+        return redirect(url_for('animal'))
 
     nom = request.form.get('nom')
     race = request.form.get('race')
@@ -264,6 +282,10 @@ def get_events():
 @login_required
 def addevent():
     if request.method == 'POST':
+        if current_user.role not in ['admin', 'soigneur']:
+            flash("Vous n'êtes pas autorisé à ajouter des événements.", 'danger')
+            return redirect(url_for('addevent'))
+
         title = request.form.get('title')
         start = request.form.get('start')
         end = request.form.get('end')
@@ -283,6 +305,14 @@ def addevent():
 @app.route('/deletevents', methods=['POST'])
 @login_required
 def deletevents():
+    if request.method == 'GET':
+        flash('Méthode non autorisée.', 'danger')
+        return redirect(url_for('addevent'))
+
+    if current_user.role not in ['admin', 'soigneur']:
+        flash("Vous n'êtes pas autorisé à supprimer des événements.", 'danger')
+        return redirect(url_for('addevent'))
+    
     event_ids = request.form.getlist('event_ids')
     if event_ids:
         for event_id in event_ids:
@@ -298,6 +328,11 @@ def deletevents():
 @app.route("/events")
 def evenement():
     return render_template("evenement.html")
+
+@app.errorhandler(404)
+def page_not_found(e):
+    flash("La page que vous recherchez n'existe pas.", 'erreur')
+    return render_template("404.html")
 
 # Création des tables de la base de donnee
 with app.app_context():
