@@ -46,6 +46,17 @@ class Event(db.Model): # Définir le modèle Event
     start = db.Column(db.String(50))
     end = db.Column(db.String(50))
 
+class Tickets(db.Model): # Définir le modèle Tickets
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(100), nullable=False)
+    prenom = db.Column(db.String(100), nullable=False)
+    uuid = db.Column(db.String(36), unique=True, nullable=False)
+    validite = db.Column(db.String(50), nullable=False)
+    date_visite = db.Column(db.String(50), nullable=False)
+    categorie = db.Column(db.String(50), nullable=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
