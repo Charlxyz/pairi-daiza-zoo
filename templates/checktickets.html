@@ -15,32 +15,103 @@
 <body class="bg-gray-100 text-gray-800">
 
     {% include '/components/nav.html' %}
-    <h2>Scanner un ticket</h2>
+    <h2 class="text-2xl font-bold text-center mt-6 mb-4">Scanner un ticket</h2>
 
-    <div id="reader"></div>
-    <div id="result"></div>
+    <div class="flex flex-col items-center">
+        <div id="reader" class="w-80"></div>
+        <div id="result" class="mt-6 text-center"></div>
+    </div>
+
+    <!-- Modal de résultat -->
+    <div id="resultModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 text-center">
+            <h3 id="modalTitle" class="text-2xl font-bold mb-4"></h3>
+            <div id="modalContent" class="mb-6 text-lg"></div>
+            <button onclick="closeModal()" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-lg transition w-full">
+                Scanner le suivant
+            </button>
+        </div>
+    </div>
 
     {% include '/components/flash.html' %}
     <script>
+    let html5QrcodeScanner = null;
+    let isScanning = false; // Flag pour empêcher les scans multiples
+
     function onScanSuccess(decodedText) {
-        document.getElementById("result").innerHTML = "QR détecté : " + decodedText;
+        // Si un scan est déjà en cours, on ignore les autres détections
+        if (isScanning) {
+            return;
+        }
+
+        isScanning = true;
+
+        // Pause le scanner immédiatement
+        html5QrcodeScanner.pause(true);
+
+        document.getElementById("result").innerHTML = "Vérification du ticket...";
 
         // Appel au serveur Flask pour vérifier la validité du ticket
         fetch("/check_ticket/" + decodedText)
             .then(response => response.json())
             .then(data => {
-                if (data.valid) {
-                    document.getElementById("result").innerHTML =
-                        "<span style='color:green;'>Ticket valide ✔️</span><br>" +
-                        "UUID : " + decodedText;
-                } else {
-                    document.getElementById("result").innerHTML =
-                        "<span style='color:red;'>Ticket invalide ❌</span>";
-                }
+                showResultModal(data, decodedText);
+            })
+            .catch(error => {
+                console.error("Erreur :", error);
+                showResultModal({ valid: false, message: "Erreur de connexion" }, decodedText);
             });
     }
 
-    let html5QrcodeScanner = new Html5QrcodeScanner(
+    function showResultModal(data, uuid) {
+        const modalTitle = document.getElementById("modalTitle");
+        const modalContent = document.getElementById("modalContent");
+        const modal = document.getElementById("resultModal");
+
+        if (data.valid === true) {
+            modalTitle.textContent = "✅ Ticket Valide";
+            modalTitle.className = "text-2xl font-bold mb-4 text-green-600";
+            modalContent.innerHTML = `
+                <p><strong>Nom :</strong> ${data.nom} ${data.prenom}</p>
+                <p><strong>Catégorie :</strong> ${data.categorie}</p>
+                <p><strong>Statut :</strong> Accepté - Ticket marqué comme utilisé</p>
+            `;
+        } else if (data.valid === false) {
+            modalTitle.textContent = "❌ Ticket Invalide";
+            modalTitle.className = "text-2xl font-bold mb-4 text-red-600";
+            const reason = data.message || "Raison inconnue";
+            modalContent.innerHTML = `
+                <p><strong>UUID :</strong> ${uuid}</p>
+                <p><strong>Raison :</strong> ${reason}</p>
+            `;
+        } else {
+            modalTitle.textContent = "⚠️ Erreur";
+            modalTitle.className = "text-2xl font-bold mb-4 text-yellow-600";
+            modalContent.innerHTML = `
+                <p>Une erreur est survenue lors de la vérification.</p>
+                <p><strong>Message :</strong> ${data.message || "Erreur inconnue"}</p>
+            `;
+        }
+
+        document.getElementById("result").innerHTML = "";
+        modal.classList.remove("hidden");
+    }
+
+    function closeModal() {
+        const modal = document.getElementById("resultModal");
+        modal.classList.add("hidden");
+        isScanning = false;
+        html5QrcodeScanner.resume(); // Reprend le scanning
+    }
+
+    // Fermer la modal en cliquant en dehors
+    document.getElementById("resultModal").addEventListener("click", function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+
+    html5QrcodeScanner = new Html5QrcodeScanner(
         "reader",
         { fps: 10, qrbox: 250 },
         false

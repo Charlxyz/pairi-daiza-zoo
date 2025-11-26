@@ -207,8 +207,42 @@ def checktickets():
 @app.route('/check_ticket/<string:ticket_uuid>')
 def check_ticket(ticket_uuid):
     ticket = Tickets.query.filter_by(uuid=ticket_uuid).first()
-    is_valid = ticket is not None and ticket.validite == "True"
-    return jsonify({"valid": is_valid})
+    
+    # Ticket non trouvé
+    if ticket is None:
+        return jsonify({
+            "valid": False,
+            "message": "Ticket introuvable"
+        }), 404
+    
+    # Ticket déjà usé
+    if ticket.validite == "False":
+        return jsonify({
+            "valid": False,
+            "message": "Ticket déjà utilisé"
+        })
+    
+    # Vérifier si la date est valide
+    date_visite = datetime.strptime(ticket.date_visite, "%Y-%m-%d").date()
+    today = datetime.now().date()
+    
+    if date_visite != today:
+        return jsonify({
+            "valid": False,
+            "message": f"Date invalide (prévu pour {date_visite.strftime('%d/%m/%Y')})"
+        })
+    
+    # Ticket valide : le marquer comme usé et retourner succès
+    ticket.validite = "False"
+    db.session.commit()
+    
+    return jsonify({
+        "valid": True,
+        "message": "Ticket accepté",
+        "nom": ticket.nom,
+        "prenom": ticket.prenom,
+        "categorie": ticket.categorie
+    })
 
 @app.route("/book")
 def book():
