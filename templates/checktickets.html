@@ -3,15 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>À propos</title>
+    <title>Scanner un Ticket</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        #reader { width: 300px; margin: auto; }
+        #result { margin-top: 20px; font-size: 1.2em; }
+    </style>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" href="../static/images/logo2.png" type="image/x-icon">
 </head>
 <body class="bg-gray-100 text-gray-800">
 
     {% include '/components/nav.html' %}
+    <h2>Scanner un ticket</h2>
+
+    <div id="reader"></div>
+    <div id="result"></div>
 
     {% include '/components/flash.html' %}
+    <script>
+    function onScanSuccess(decodedText) {
+        document.getElementById("result").innerHTML = "QR détecté : " + decodedText;
+
+        // Appel au serveur Flask pour vérifier la validité du ticket
+        fetch("/check_ticket/" + decodedText)
+            .then(response => response.json())
+            .then(data => {
+                if (data.valid) {
+                    document.getElementById("result").innerHTML =
+                        "<span style='color:green;'>Ticket valide ✔️</span><br>" +
+                        "UUID : " + decodedText;
+                } else {
+                    document.getElementById("result").innerHTML =
+                        "<span style='color:red;'>Ticket invalide ❌</span>";
+                }
+            });
+    }
+
+    let html5QrcodeScanner = new Html5QrcodeScanner(
+        "reader",
+        { fps: 10, qrbox: 250 },
+        false
+    );
+
+    html5QrcodeScanner.render(onScanSuccess);
+    </script>
 
 </body>
 </html>
