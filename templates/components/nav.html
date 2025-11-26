@@ -1,36 +1,38 @@
-<nav class="bg-[#D9D9D9] w-full h-20 flex items-center justify-between px-6">
-    <!-- Liens de gauche -->
-    <div class="flex items-center space-x-4">
-      <a href="/book" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
-        Réserver
-      </a>
-      <a href="/animals" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
-        Nos animaux
-      </a>
-      <a href="/events" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
-        Événements
-      </a>
-    </div>
-
-    <!-- Logo centré -->
-    <div class="absolute left-1/2 transform -translate-x-1/2">
-      <a href="/">
-          <img src="./static/images/logo2.png" alt="logo" class="w-20 h-20 rounded-full object-cover">
-      </a>
-    </div>
-
-    <!-- Barre de recherche + compte -->
-    <div class="flex items-center space-x-4">
-      <div class="relative">
-        <input
-          type="text"
-          placeholder="Rechercher..."
-          class="px-3 py-2 rounded-lg border border-gray-400 bg-[#EDE3E3] focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
-        <button class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-green-600">
-          <i class="fas fa-search mr-2"></i>
-        </button>
+<nav class="bg-[#D9D9D9] w-full sticky top-0 z-50 shadow-md">
+    <!-- Desktop header -->
+    <div class="hidden md:flex items-center justify-between px-6 py-3 h-20 relative">
+      <!-- Liens de gauche -->
+      <div class="flex items-center space-x-4">
+        <a href="/book" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
+          Réserver
+        </a>
+        <a href="/animals" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
+          Nos animaux
+        </a>
+        <a href="/events" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
+          Événements
+        </a>
       </div>
+
+      <!-- Logo centré -->
+      <div class="absolute left-1/2 transform -translate-x-1/2">
+        <a href="/">
+          <img src="./static/images/logo2.png" alt="logo" class="w-20 h-20 rounded-full object-cover">
+        </a>
+      </div>
+
+      <!-- Barre de recherche + compte -->
+      <div class="flex items-center space-x-4">
+        <div class="relative">
+          <input
+            type="text"
+            placeholder="Rechercher..."
+            class="px-3 py-2 rounded-lg border border-gray-400 bg-[#EDE3E3] focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <button class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-green-600">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
         {% if current_user.is_authenticated %}
           <a href="/compte" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
             Mon compte
@@ -40,7 +42,69 @@
             Connexion
           </a>
         {% endif %}
+      </div>
+    </div>
 
+    <!-- Mobile header -->
+    <div class="md:hidden flex items-center justify-between px-4 py-3 h-20">
+      <!-- Logo (mobile) -->
+      <div class="flex items-center">
+        <a href="/">
+          <img src="./static/images/logo2.png" alt="logo" class="w-16 h-16 rounded-full object-cover">
+        </a>
+      </div>
 
+      <!-- Menu hamburger (mobile only) -->
+      <button class="flex flex-col space-y-1.5 focus:outline-none" id="menuToggle">
+        <span class="w-6 h-0.5 bg-black transition-all"></span>
+        <span class="w-6 h-0.5 bg-black transition-all"></span>
+        <span class="w-6 h-0.5 bg-black transition-all"></span>
+      </button>
+    </div>
+
+    <!-- Mobile menu (dropdown) -->
+    <div id="mobileMenu" class="hidden md:hidden bg-[#D9D9D9] border-t border-gray-300 pb-4">
+      <div class="flex flex-col space-y-2 px-4">
+        <a href="/book" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">
+          Réserver
+        </a>
+        <a href="/animals" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">
+          Nos animaux
+        </a>
+        <a href="/events" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">
+          Événements
+        </a>
+        
+        <!-- Barre de recherche mobile -->
+        <div class="relative py-2">
+          <input
+            type="text"
+            placeholder="Rechercher..."
+            class="w-full px-3 py-2 rounded-lg border border-gray-400 bg-[#EDE3E3] focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <button class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-green-600">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+
+        {% if current_user.is_authenticated %}
+          <a href="/compte" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">
+            Mon compte
+          </a>
+        {% else %}
+          <a href="/login" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">
+            Connexion
+          </a>
+        {% endif %}
+      </div>
     </div>
   </nav>
+
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    
+    menuToggle.addEventListener('click', function() {
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
