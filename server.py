@@ -341,7 +341,7 @@ def deletevents():
 def new_tickets():
     if request.method == 'POST':
         nom = request.form['nom']
-        prénom = request.form['prénom']
+        prénom = request.form['prenom']
         categore = request.form['categore']
         date = request.form['date']
 
