@@ -1,19 +1,100 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Accueil</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="icon" href="../static/images/logo2.png" type="image/x-icon">
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accueil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="icon" href="../static/images/logo2.png" type="image/x-icon" />
+  </head>
 
-<body class="w-full h-screen bg-[#EDE3E3]">
+  <body class="w-full h-screen bg-[#EDE3E3]">
+    {% include '/components/nav.html' %}
+    <div
+      class="w-full mt-20 relative flex items-center justify-center gap-6 px-4"
+    >
+      <div class="w-full max-w-lg bg-white rounded-lg shadow p-6">
+        <h1 class="text-2xl font-bold mb-4">Réserver votre visite</h1>
 
-  {% include '/components/nav.html' %}
+        <form
+          action="{{ url_for('newticket') }}"
+          method="post"
+          class="space-y-4"
+        >
+          <div>
+            <label for="date" class="block font-medium mb-1"
+              >Date de visite</label
+            >
+            <input
+              id="date"
+              name="date"
+              type="datetime-local"
+              required
+              class="w-full px-3 py-2 border rounded"
+            />
+          </div>
 
-  {% include '/components/flash.html' %}
+          <div>
+            <label for="nom" class="block font-medium mb-1">Nom</label>
+            <input
+              id="nom"
+              name="nom"
+              type="text"
+              maxlength="20"
+              required
+              class="w-full px-3 py-2 border rounded"
+            />
+          </div>
 
-</body>
+          <div>
+            <label for="prenom" class="block font-medium mb-1">Prénom</label>
+            <input
+              id="prenom"
+              name="prenom"
+              type="text"
+              maxlength="30"
+              required
+              class="w-full px-3 py-2 border rounded"
+            />
+          </div>
+
+          <div>
+            <label for="categorie" class="block font-medium mb-1"
+              >Catégorie</label
+            >
+            <select
+              id="categorie"
+              name="categorie"
+              required
+              class="w-full px-3 py-2 border rounded"
+            >
+              <option value="">Sélectionnez une catégorie</option>
+              <option value="enfant">Enfant</option>
+              <option value="adulte">Adulte</option>
+              <option value="senior">Sénior</option>
+            </select>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <button
+              type="submit"
+              class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Ajouter
+            </button>
+            <a
+              href="{{ url_for('acceuil') }}"
+              class="text-sm text-gray-600 hover:underline"
+              >Annuler</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+    {% include '/components/flash.html' %}
+  </body>
 </html>
