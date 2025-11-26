@@ -24,7 +24,7 @@
 
     <!-- Modal de résultat -->
     <div id="resultModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 text-center">
+        <div id="modalContainer" class="bg-white rounded-xl p-8 max-w-md w-full mx-4 text-center border-l-4">
             <h3 id="modalTitle" class="text-2xl font-bold mb-4"></h3>
             <div id="modalContent" class="mb-6 text-lg"></div>
             <button onclick="closeModal()" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-lg transition w-full">
@@ -66,11 +66,16 @@
     function showResultModal(data, uuid) {
         const modalTitle = document.getElementById("modalTitle");
         const modalContent = document.getElementById("modalContent");
+        const modalContainer = document.getElementById("modalContainer");
         const modal = document.getElementById("resultModal");
 
         if (data.valid === true) {
+            const snd = new Audio("{{ url_for('static', filename='sounds/success.mp3') }}");
+            snd.currentTime = 0;
+            snd.play();
             modalTitle.textContent = "✅ Ticket Valide";
             modalTitle.className = "text-2xl font-bold mb-4 text-green-600";
+            modalContainer.className = "bg-green-50 rounded-xl p-8 max-w-md w-full mx-4 text-center border-l-4 border-green-500";
             modalContent.innerHTML = `
                 <p><strong>Nom :</strong> ${data.nom} ${data.prenom}</p>
                 <p><strong>Catégorie :</strong> ${data.categorie}</p>
@@ -78,22 +83,34 @@
             `;
         } else if (data.valid === false) {
             if (data.type === "date_invalid") {
-                modalTitle.textContent = "❌ Date incorecte";
+                const snd = new Audio("{{ url_for('static', filename='sounds/error.mp3') }}");
+                snd.currentTime = 0;
+                snd.play();
+                modalTitle.textContent = "⚠️ Date Incorrecte";
                 modalTitle.className = "text-2xl font-bold mb-4 text-orange-600";
+                modalContainer.className = "bg-orange-50 rounded-xl p-8 max-w-md w-full mx-4 text-center border-l-4 border-orange-500";
                 modalContent.innerHTML = `
                     <p><strong>Raison :</strong> ${data.message}</p>
                 `;
             } else {
+                const snd = new Audio("{{ url_for('static', filename='sounds/error.mp3') }}");
+                snd.currentTime = 0;
+                snd.play();
                 modalTitle.textContent = "❌ Ticket Invalide";
                 modalTitle.className = "text-2xl font-bold mb-4 text-red-600";
+                modalContainer.className = "bg-red-50 rounded-xl p-8 max-w-md w-full mx-4 text-center border-l-4 border-red-500";
                 const reason = data.message || "Raison inconnue";
                 modalContent.innerHTML = `
                     <p><strong>Raison :</strong> ${reason}</p>
                 `;
             }
         } else {
+            const snd = new Audio("{{ url_for('static', filename='sounds/error.mp3') }}");
+            snd.currentTime = 0;
+            snd.play();
             modalTitle.textContent = "⚠️ Erreur";
             modalTitle.className = "text-2xl font-bold mb-4 text-yellow-600";
+            modalContainer.className = "bg-yellow-50 rounded-xl p-8 max-w-md w-full mx-4 text-center border-l-4 border-yellow-500";
             modalContent.innerHTML = `
                 <p>Une erreur est survenue lors de la vérification.</p>
                 <p><strong>Message :</strong> ${data.message || "Erreur inconnue"}</p>
