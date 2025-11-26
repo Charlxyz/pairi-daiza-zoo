@@ -77,7 +77,7 @@
                 <p><strong>Statut :</strong> Accepté - Ticket marqué comme utilisé</p>
             `;
         } else if (data.valid === false) {
-            if (date.type === "date_invalid") {
+            if (data.type === "date_invalid") {
                 modalTitle.textContent = "❌ Date incorecte";
                 modalTitle.className = "text-2xl font-bold mb-4 text-orange-600";
                 modalContent.innerHTML = `
