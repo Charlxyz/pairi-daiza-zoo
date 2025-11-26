@@ -151,23 +151,10 @@ def compte():
 def book():
     return render_template("reserver.html")
 
-@app.route('/animals', methods=['GET', 'POST'])
+@app.route('/animals')
 def animal():
-    if request.method == 'POST':
-        nom = request.form['nom']
-        enclot = request.form['enclot']
-        espece = request.form['espece']
-        arrive = request.form['arrive']
-        soin = request.form['soin']
-
-        new_animal = Animal(nom=nom, enclot=enclot, espèce=espece, arrive=arrive, soin=soin)
-        db.session.add(new_animal)
-        db.session.commit()
-        flash("Animal ajouté avec succès!", "success")
-        return redirect(url_for('animal'))
-    else:
-        animaux = Animal.query.all()
-        return render_template("animaux.html", animaux=animaux)
+    animaux = Animal.query.all()
+    return render_template("animaux.html", animaux=animaux)
 
 @app.route('/api/addanimal', methods=['POST'])
 def add_animals():
@@ -225,6 +212,39 @@ def delete_animal(animal_id):
 
     return jsonify({'success': True}), 200
 
+@app.route('/api/editanimal/<int:animal_id>', methods=['POST'])
+@login_required
+def edit_animal(animal_id):
+    animal = db.session.get(Animal, animal_id)
+    if not animal:
+        return jsonify({'error': 'Animal not found'}), 404
+
+    # Only admin or soigneur can edit
+    if getattr(current_user, 'role', None) not in ['admin', 'soigneur']:
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    nom = request.form.get('nom')
+    race = request.form.get('race')
+    enclot = request.form.get('enclot')
+    arrive = request.form.get('arrive')
+    depart = request.form.get('depart')
+    enclot = request.form.get('enclot')
+
+    if nom:
+        animal.nom = nom
+    if race:
+        animal.espèce = race
+    if enclot:
+        animal.enclot = enclot
+    if arrive:
+        animal.arrive = arrive
+    if depart != "":
+        animal.depart = depart or None
+    if enclot:
+        animal.enclot = enclot
+
+    db.session.commit()
+    return redirect(url_for('animal'))
     
 @app.route("/api/events")
 def get_events():

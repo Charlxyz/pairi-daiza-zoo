@@ -23,7 +23,7 @@
         </button>
         {% endif %}
 
-        <!-- Carte animal -->
+        <!-- CARTES ANIMAUX -->
         {% for animau in animaux %}
         <div id="animal-{{ animau.id }}" class="animal-card bg-[#DEDEDE] rounded-xl shadow flex items-center p-6 relative">
             
@@ -50,61 +50,62 @@
                 </p>
             </div>
 
-            <!-- Bouton Modifier -->
-            {% if current_user.role == 'admin' or current_user.role == 'soigneur' %}
-                <div class="absolute bottom-6 right-6 flex space-x-3">
-                    <button
-                        onclick="openModal('{{ animau.nom }}', '{{ animau.arrive }}', '{{ animau.espèce }}')"
-                        class="bg-green-400 hover:bg-green-500 transition text-white font-semibold px-6 py-2 rounded-lg">
-                        MODIFIER
-                    </button>
+            <!-- Boutons -->
+            {% if current_user.role in ['admin', 'soigneur'] %}
+            <div class="absolute bottom-6 right-6 flex space-x-3">
+                <button
+                    onclick="openModal('{{ animau.nom }}', '{{ animau.arrive }}', '{{ animau.espèce }}', '{{ animau.id }}')"
+                    class="bg-green-400 hover:bg-green-500 transition text-white font-semibold px-6 py-2 rounded-lg">
+                    MODIFIER
+                </button>
 
-                    <button
-                        onclick="deleteAnimal('{{ animau.id }}')"
-                        class="bg-red-500 hover:bg-red-600 transition text-white font-semibold px-6 py-2 rounded-lg">
-                        SUPPRIMER
-                    </button>
-                </div>
+                <button
+                    onclick="deleteAnimal('{{ animau.id }}')"
+                    class="bg-red-500 hover:bg-red-600 transition text-white font-semibold px-6 py-2 rounded-lg">
+                    SUPPRIMER
+                </button>
+            </div>
             {% endif %}
         </div>
         {% endfor %}
 
     </div>
 
-    <!-- UN SEUL MODAL -->
-    <div id="editModal" 
-         class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
+    <!-- MODAL MODIFICATION -->
+    <div id="editModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
         <div class="bg-white p-6 rounded-xl shadow-xl w-[350px]">
             <h2 class="text-xl font-bold mb-4">Modifier l'animal</h2>
-            <form class="space-y-4">
+            <form id="editForm" class="space-y-4" method="POST">
                 <div>
                     <label class="block font-semibold">Nom :</label>
-                    <input id="modal-nom" type="text" class="w-full border rounded-lg px-3 py-2">
+                    <input id="modal-nom" name="nom" type="text" class="w-full border rounded-lg px-3 py-2">
                 </div>
 
                 <div>
                     <label class="block font-semibold">Arrivée :</label>
-                    <input id="modal-arrivee" type="date" class="w-full border rounded-lg px-3 py-2">
+                    <input id="modal-arrivee" name="arrive" type="date" class="w-full border rounded-lg px-3 py-2">
                 </div>
 
                 <div>
                     <label class="block font-semibold">Départ :</label>
-                    <input id="modal-depart" type="date" class="w-full border rounded-lg px-3 py-2">
+                    <input id="modal-depart" name="depart" type="date" class="w-full border rounded-lg px-3 py-2">
                 </div>
 
                 <div>
                     <label class="block font-semibold">Race :</label>
-                    <input id="modal-race" type="text" class="w-full border rounded-lg px-3 py-2">
+                    <input id="modal-race" name="race" type="text" class="w-full border rounded-lg px-3 py-2">
+                </div>
+
+                <div>
+                    <label class="block font-semibold">Enclôt :</label>
+                    <input id="modal-enclot" name="enclot" type="text" class="w-full border rounded-lg px-3 py-2">
                 </div>
 
                 <div class="flex justify-between pt-2">
-                    <button type="button" onclick="closeModal()" 
-                            class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">
                         Annuler
                     </button>
-
-                    <button type="submit" 
-                            class="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white">
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white">
                         Enregistrer
                     </button>
                 </div>
@@ -113,8 +114,7 @@
     </div>
 
     <!-- MODAL AJOUT ANIMAL -->
-    <div id="addModal" 
-        class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
+    <div id="addModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
         <div class="bg-white p-6 rounded-xl shadow-xl w-[350px]">
             <h2 class="text-xl font-bold mb-4">Ajouter un animal</h2>
             <form method="POST" action="/api/addanimal" class="space-y-4" enctype="multipart/form-data">
@@ -150,13 +150,10 @@
                 </div>
 
                 <div class="flex justify-between pt-2">
-                    <button type="button" onclick="closeAddModal()" 
-                            class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400">
                         Annuler
                     </button>
-
-                    <button type="submit" 
-                            class="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white">
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white">
                         Ajouter
                     </button>
                 </div>
@@ -164,64 +161,57 @@
         </div>
     </div>
 
+    <!-- SCRIPTS -->
+    <script>
+        function openModal(nom, arrivee, race, id) {
+            const modal = document.getElementById("editModal");
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
 
+            document.getElementById("modal-nom").value = nom;
+            document.getElementById("modal-arrivee").value = arrivee;
+            document.getElementById("modal-race").value = race;
+            document.getElementById("modal-enclot").value = enclot;
+            document.getElementById("modal-depart").value = "";
 
-<script>
-    function openModal(nom, arrivee, race) {
-        const modal = document.getElementById("editModal");
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-
-        document.getElementById("modal-nom").value = nom;
-        document.getElementById("modal-arrivee").value = arrivee;
-        document.getElementById("modal-race").value = race;
-    }
-
-    function closeModal() {
-        const modal = document.getElementById("editModal");
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-    }
-</script>
-<script>
-    function openAddModal() {
-        document.getElementById("addModal").classList.remove("hidden");
-        document.getElementById("addModal").classList.add("flex");
-    }
-
-    function closeAddModal() {
-        document.getElementById("addModal").classList.add("hidden");
-        document.getElementById("addModal").classList.remove("flex");
-    }
-</script>
-<script>
-    async function deleteAnimal(id) {
-        if (!confirm('Voulez-vous vraiment supprimer cet animal ?')) return;
-
-        try {
-            const res = await fetch(`/api/deleteanimal/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-
-            if (res.ok) {
-                // remove the card from DOM
-                const el = document.getElementById(`animal-${id}`);
-                if (el) el.remove();
-            } else {
-                const data = await res.json().catch(() => ({}));
-                alert(data.error || 'Erreur lors de la suppression.');
-            }
-        } catch (err) {
-            console.error(err);
-            alert('Impossible de contacter le serveur.');
+            document.getElementById("editForm").action = `/api/editanimal/${id}`;
         }
-    }
-</script>
 
+        function closeModal() {
+            const modal = document.getElementById("editModal");
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
 
+        function openAddModal() {
+            document.getElementById("addModal").classList.remove("hidden");
+            document.getElementById("addModal").classList.add("flex");
+        }
+
+        function closeAddModal() {
+            document.getElementById("addModal").classList.add("hidden");
+            document.getElementById("addModal").classList.remove("flex");
+        }
+
+        async function deleteAnimal(id) {
+            if (!confirm('Voulez-vous vraiment supprimer cet animal ?')) return;
+
+            try {
+                const res = await fetch(`/api/deleteanimal/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                if (res.ok) {
+                    document.getElementById(`animal-${id}`).remove();
+                } else {
+                    alert('Erreur lors de la suppression.');
+                }
+            } catch (err) {
+                alert('Impossible de contacter le serveur.');
+            }
+        }
+    </script>
 
 </body>
 </html>
