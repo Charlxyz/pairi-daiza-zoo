@@ -25,6 +25,7 @@
                         <th class="py-3 px-4 text-left">Catégorie</th>
                         <th class="py-3 px-4 text-left">Date</th>
                         <th class="py-3 px-4 text-left">Description</th>
+                        <th class="py-3 px-4 text-left">Actions</th>
                     </tr>
                 </thead>
 
@@ -35,15 +36,63 @@
                             <td class="py-3 px-4 font-semibold">{{ soin.animal.nom }}</td>
                             <td class="py-3 px-4">{{ soin.soigneur.nom }} {{ soin.soigneur.prenom }}</td>
                             <td class="py-3 px-4">{{ soin.categorie }}</td>
-                            <td class="py-3 px-4">
-                                {{ soin.date.strftime('%d/%m/%Y') }}
-                            </td>
+                            <td class="py-3 px-4">{{ soin.date.strftime('%d/%m/%Y') }}</td>
                             <td class="py-3 px-4">{{ soin.description }}</td>
+
+                            <!-- ACTION BUTTONS -->
+                            <td class="py-3 px-4 space-x-2">
+                                <button
+                                    onclick="document.getElementById('modalEdit{{ soin.id }}').classList.remove('hidden')"
+                                    class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
+                                    Modifier
+                                </button>
+
+                                <form action="/api/deletesoins/{{ soin.id }}" method="POST" class="inline">
+                                    <button type="submit"
+                                            class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded-lg">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
+
+                        <!-- MODALE MODIFICATION -->
+                        <div id="modalEdit{{ soin.id }}"
+                             class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+                            <div class="bg-white rounded-xl shadow-lg w-[450px] p-6">
+                                <h2 class="text-2xl font-bold mb-4 text-center">Modifier le soin</h2>
+
+                                <form action="/api/editsoins/{{ soin.id }}" method="POST">
+
+                                    <label class="block font-semibold mt-2">Catégorie :</label>
+                                    <input type="text" name="categorie" value="{{ soin.categorie }}" class="w-full p-2 border rounded-lg" required>
+
+                                    <label class="block font-semibold mt-2">Description :</label>
+                                    <textarea name="description" class="w-full p-2 border rounded-lg" required>{{ soin.description }}</textarea>
+
+                                    <label class="block font-semibold mt-2">Date :</label>
+                                    <input type="date" name="date" value="{{ soin.date.strftime('%Y-%m-%d') }}" class="w-full p-2 border rounded-lg" required>
+
+                                    <div class="mt-5 flex justify-between">
+                                        <button type="button"
+                                                onclick="document.getElementById('modalEdit{{ soin.id }}').classList.add('hidden')"
+                                                class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg">
+                                            Annuler
+                                        </button>
+
+                                        <button type="submit"
+                                                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">
+                                            Sauvegarder
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="5" class="text-center py-6 text-gray-500 font-semibold">
+                            <td colspan="6" class="text-center py-6 text-gray-500 font-semibold">
                                 Aucun soin enregistré
                             </td>
                         </tr>
@@ -73,7 +122,6 @@
 
             <form action="{{ url_for('add_soins') }}" method="POST">
 
-                <!-- Animal -->
                 <label class="block font-semibold mt-2">Animal :</label>
                 <select name="animal_id" class="w-full p-2 border rounded-lg" required>
                     {% for animal in animaux %}
@@ -81,7 +129,6 @@
                     {% endfor %}
                 </select>
 
-                <!-- Soigneur -->
                 <label class="block font-semibold mt-2">Soigneur :</label>
                 <select name="soigneur_id" class="w-full p-2 border rounded-lg" required>
                     {% for soigneur in soigneurs %}
@@ -89,20 +136,16 @@
                     {% endfor %}
                 </select>
 
-                <!-- Catégorie -->
                 <label class="block font-semibold mt-2">Catégorie :</label>
-                <input type="text" name="categorie" class="w-full p-2 border rounded-lg" placeholder="Ex : Vaccination" required>
+                <input type="text" name="categorie" class="w-full p-2 border rounded-lg" required>
 
-                <!-- Description -->
                 <label class="block font-semibold mt-2">Description :</label>
-                <textarea name="description" class="w-full p-2 border rounded-lg" placeholder="Détails du soin..." required></textarea>
+                <textarea name="description" class="w-full p-2 border rounded-lg" required></textarea>
 
-                <!-- Date -->
                 <label class="block font-semibold mt-2">Date :</label>
                 <input type="date" name="date" class="w-full p-2 border rounded-lg" required
                        value="{{ datetime.utcnow().strftime('%Y-%m-%d') }}">
 
-                <!-- Actions -->
                 <div class="mt-5 flex justify-between">
                     <button type="button"
                             onclick="document.getElementById('modalAddSoin').classList.add('hidden')"

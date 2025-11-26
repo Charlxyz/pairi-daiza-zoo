@@ -2,8 +2,11 @@ from flask import Flask, render_template, redirect, url_for, flash, request, jso
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_talisman import Talisman
 from functools import wraps
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.utils import secure_filename
+import importlib.util
 import os, uuid
 from datetime import datetime
 import qrcode
@@ -13,10 +16,27 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bdd.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = '\xf0?a\x9a\\\xff\xd4;\x0c\xcbHi'
+app.config[ 'SESSION_COOKIE_SECURE' ] = True
+app.config[ 'REMEMBER_COOKIE_SECURE' ] = True
+app.config[ 'SESSION_COOKIE_SAMESITE' ] = 'Lax'
+app.config[ 'PREFERRED_URL_SCHEME' ] = 'https'
+
+app.wsgi_app = ProxyFix(app.wsgi_app, x_proto= 1 , x_host= 1 )
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
+
+cryptography_available = importlib.util.find_spec("cryptography") is not None
+
+if not cryptography_available:
+    app.logger.warning(
+        "The 'cryptography' package is missing; HTTPS redirects and dev certificates are disabled. "
+        "Install it to enable secure transport in development."
+    )
+    talisman = None
+else:
+    talisman = Talisman(app, content_security_policy=None, force_https_permanent=True)
 
 # UPLOAD FOLDER CONFIGURATION
 UPLOAD_FOLDER_ANIMAL = "static/uploads"
@@ -467,4 +487,6 @@ with app.app_context():
     db.create_all()  # Crée les tables si elles n'existent pas
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True, ssl_context='adhoc')
+    ssl_context = 'adhoc' if cryptography_available else None
+    app.run(host='0.0.0.0', port=5000, debug=True, ssl_context=ssl_context)
