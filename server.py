@@ -294,7 +294,7 @@ def get_events():
 def addevent():
     if current_user.role not in ['admin', 'soigneur']:
         flash("Vous n'êtes pas autorisé à ajouter des événements.", 'danger')
-        return redirect(url_for('addevent'))
+        return redirect(url_for('acceuil'))
 
     if request.method == 'POST':
         title = request.form.get('title')
