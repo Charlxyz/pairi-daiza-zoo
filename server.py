@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, jsonify
+from flask import Flask, render_template, redirect, url_for, flash, request, jsonify, send_file
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -6,6 +6,8 @@ from functools import wraps
 from werkzeug.utils import secure_filename
 import os, uuid
 from datetime import datetime
+import qrcode
+import io
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bdd.db'
@@ -159,6 +161,16 @@ def logout():
     logout_user()
     flash("Déconnexion réussie.", 'success')
     return redirect(url_for('acceuil'))
+
+@app.route('/ticket/<string:ticket_uuid>/qrcode')
+def ticket_qrcode(ticket_uuid):
+    # Génération du QR code en mémoire
+    img = qrcode.make(ticket_uuid)
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
+
+    return send_file(buffer, mimetype='image/png')
 
 @app.route("/compte")
 @login_required
@@ -374,6 +386,10 @@ def new_tickets():
 @app.route("/events")
 def evenement():
     return render_template("evenement.html")
+
+@app.route("/soins")
+def soins():
+    return render_template("soins.html")
 
 @app.errorhandler(404)
 def page_not_found(e):

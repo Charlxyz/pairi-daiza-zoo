@@ -1,57 +1,78 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mon compte</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" href="../static/images/logo2.png" type="image/x-icon">
-</head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <link rel="icon" href="../static/images/logo2.png" type="image/x-icon" />
+  </head>
+  <body class="w-full h-screen bg-[#EDE3E3]">
+    {% include '/components/nav.html' %}
 
-  <div class="bg-white shadow-lg rounded-xl p-6 w-full max-w-md text-center m-6">
-    <h1 class="text-2xl font-bold mb-4">Mon compte</h1>
+    <div class="bg-gray-100 flex items-center justify-center min-h-screen">
+      <div
+        class="bg-white shadow-lg rounded-xl p-6 w-full max-w-md text-center m-6"
+      >
+        <h1 class="text-2xl font-bold mb-4">Mon compte</h1>
 
-    <div class="text-left space-y-2">
-      <p><span class="font-semibold">Nom :</span> {{ current_user.nom }}</p>
-      <p><span class="font-semibold">Adresse e-mail :</span> {{ current_user.email }}</p>
-      <p><span class="font-semibold">Rôle :</span> {{ current_user.role }}</p>
+        <div class="text-left space-y-2">
+          <p><span class="font-semibold">Nom :</span> {{ current_user.nom }}</p>
+          <p>
+            <span class="font-semibold">Adresse e-mail :</span> {{
+            current_user.email }}
+          </p>
+          <p>
+            <span class="font-semibold">Rôle :</span> {{ current_user.role }}
+          </p>
+        </div>
+
+        <a
+          href="/logout"
+          class="mt-6 inline-block bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition"
+        >
+          Se déconnecter
+        </a>
+      </div>
+
+      {% if tickets %}
+      <div
+        class="bg-white shadow-lg rounded-xl p-6 w-full max-w-2xl text-center m-6"
+      >
+        <h2 class="text-xl font-bold mb-4">Mes billets</h2>
+        <table class="w-full table-auto border-collapse">
+          <thead>
+            <tr>
+              <th class="border px-4 py-2">Date de visite</th>
+              <th class="border px-4 py-2">Catégorie</th>
+              <th class="border px-4 py-2">Validité</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ticket in tickets %}
+            <tr>
+              <td class="border px-4 py-2">
+                {{ ticket.date_visite | date_humaine }}
+              </td>
+              <td class="border px-4 py-2">{{ ticket.categorie }}</td>
+              <td class="border px-4 py-2">
+                {{ 'Valide' if ticket.validite == 'True' else 'Invalide' }}
+              </td>
+            </tr>
+            <img src="/ticket/{{ ticket.uuid }}/qrcode" alt="QR Code du ticket">
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div
+        class="bg-white shadow-lg rounded-xl p-6 w-full max-w-md text-center m-6"
+      >
+        <p class="text-gray-600">Vous n'avez pas encore de billets réservés.</p>
+      </div>
+      {% endif %}
     </div>
 
-    <a href="/logout" class="mt-6 inline-block bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition">
-      Se déconnecter
-    </a>
-  </div>
-
-  {% if tickets %}
-    <div class="bg-white shadow-lg rounded-xl p-6 w-full max-w-2xl text-center m-6">
-      <h2 class="text-xl font-bold mb-4">Mes billets</h2>
-      <table class="w-full table-auto border-collapse">
-        <thead>
-          <tr>
-            <th class="border px-4 py-2">Date de visite</th>
-            <th class="border px-4 py-2">Catégorie</th>
-            <th class="border px-4 py-2">Validité</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for ticket in tickets %}
-          <tr>
-            <td class="border px-4 py-2">{{ ticket.date_visite | date_humaine }}</td>
-            <td class="border px-4 py-2">{{ ticket.categorie }}</td>
-            <td class="border px-4 py-2">{{ 'Valide' if ticket.validite == 'True' else 'Invalide' }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  {% else %}
-    <div class="bg-white shadow-lg rounded-xl p-6 w-full max-w-md text-center m-6">
-      <p class="text-gray-600">Vous n'avez pas encore de billets réservés.</p>
-    </div>
-  {% endif %}
-
-  {% include '/components/flash.html' %}
-
-</body>
+    {% include '/components/flash.html' %}
+  </body>
 </html>
