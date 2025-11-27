@@ -536,6 +536,61 @@ def add_soins():
 
     return redirect(url_for('soins'))
 
+@app.route('/api/editsoins/<int:soin_id>', methods=['POST'])
+@login_required
+def edit_soins(soin_id):
+
+    if current_user.role not in ['admin', 'soigneur']:
+        flash("Vous n'êtes pas autorisé à modifier un soin.", "danger")
+        return redirect(url_for('soins'))
+
+    soin = db.session.get(Soin, soin_id)
+
+    if not soin:
+        flash("Soin introuvable.", "danger")
+        return redirect(url_for('soins'))
+
+    # Récupère les champs du formulaire
+    categorie = request.form.get('categorie')
+    description = request.form.get('description')
+    date_str = request.form.get('date')
+
+    try:
+        date = datetime.strptime(date_str, "%Y-%m-%d").date()
+    except:
+        flash("Date invalide.", "danger")
+        return redirect(url_for('soins'))
+
+    # Mise à jour
+    soin.categorie = categorie
+    soin.description = description
+    soin.date = date
+
+    db.session.commit()
+
+    flash("Soin modifié avec succès.", "success")
+    return redirect(url_for('soins'))
+
+@app.route('/api/deletesoins/<int:soin_id>', methods=['POST'])
+@login_required
+def delete_soins(soin_id):
+
+    if current_user.role not in ['admin', 'soigneur']:
+        flash("Vous n'êtes pas autorisé à supprimer un soin.", "danger")
+        return redirect(url_for('soins'))
+
+    soin = db.session.get(Soin, soin_id)
+
+    if not soin:
+        flash("Soin introuvable.", "danger")
+        return redirect(url_for('soins'))
+
+    db.session.delete(soin)
+    db.session.commit()
+
+    flash("Soin supprimé avec succès.", "success")
+    return redirect(url_for('soins'))
+
 @app.route('/map')
 def map():
     return render_template('map.html')
