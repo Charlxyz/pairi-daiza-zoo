@@ -126,8 +126,6 @@ def login():
         if request.method == 'POST':
             email = request.form['identifiant'] # Récupere l'email inscrit dans le html
             password = request.form['mdp'] # Récupere le mot de passe inscrit dans le html
-            print(email)
-            print(password)
             if all(value not in ["", None, " "] for value in [email, password]):
                 user = User.query.filter_by(email=email).first() # Verrifie l'existance de l'adresse mail dans la base de donnee
                 if user and bcrypt.check_password_hash(user.password, password): # check_password_hash() permet de comparé le mot de passe dans la base de donnees et celui rentre dans le html
@@ -506,6 +504,7 @@ def soins():
     return render_template("soins.html", soins=soins, animaux=animaux, soigneurs=soigneurs, datetime=datetime)
 
 @app.route("/api/addsoins", methods=['POST', 'GET'])
+@login_required
 def add_soins():
     if request.method == 'GET':
         flash('Méthode non autorisée.', 'danger')
