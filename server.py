@@ -34,7 +34,7 @@ class User(db.Model, UserMixin): # Définir le modèle User
     def __repr__(self):
         return f'<User {self.nom}>'
     
-class Animal(db.Model): # Définir le modèle Animal
+class Animal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(80), nullable=False)
     enclot = db.Column(db.String(80), nullable=False)
@@ -43,6 +43,14 @@ class Animal(db.Model): # Définir le modèle Animal
     depart = db.Column(db.String(80))
     soin = db.Column(db.String(80))
     image = db.Column(db.String(200))
+
+    # AJOUT ICI : Supprimer automatiquement les soins liés
+    soins = db.relationship(
+        "Soin",
+        backref="animal",
+        cascade="all, delete-orphan",
+        lazy=True
+    )
 
 class Event(db.Model): # Définir le modèle Event
     id = db.Column(db.Integer, primary_key=True)
@@ -61,17 +69,16 @@ class Tickets(db.Model): # Définir le modèle Tickets
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-class Soin(db.Model): # Définir le modèle Soin
+class Soin(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(200), nullable=False)
-    categorie = db.Column(db.String(100), nullable=False)  # Vaccination, Contrôle, Médical...
+    categorie = db.Column(db.String(100), nullable=False)
     date = db.Column(db.Date, nullable=False)
 
     animal_id = db.Column(db.Integer, db.ForeignKey('animal.id'), nullable=False)
     soigneur_id = db.Column(db.Integer, db.ForeignKey('soigneur.id'), nullable=False)
 
-    # Relations
-    animal = db.relationship('Animal', backref='soins', lazy=True)
+    # Plus besoin de définir "animal = relationship(...)"
     soigneur = db.relationship('Soigneur', backref='soins', lazy=True)
 
 class Soigneur(db.Model): # Définir le modèle Soigneur
