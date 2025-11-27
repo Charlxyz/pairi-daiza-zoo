@@ -124,12 +124,12 @@
 
                 <div>
                     <label class="block font-semibold">Nom :</label>
-                    <input name="nom" id="add-nom" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="Ex : Simba">
+                    <input name="nom" id="add-nom" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="Ex : Simba" required>
                 </div>
 
                 <div>
                     <label class="block font-semibold">Arrivée :</label>
-                    <input name="arrive" id="add-arrivee" type="date" class="w-full border rounded-lg px-3 py-2">
+                    <input name="arrive" id="add-arrivee" type="date" class="w-full border rounded-lg px-3 py-2" required>
                 </div>
 
                 <div>
@@ -144,12 +144,12 @@
 
                 <div>
                     <label class="block font-semibold">Race :</label>
-                    <input name="race" id="add-race" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="Ex : Tigre">
+                    <input name="race" id="add-race" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="Ex : Tigre" required>
                 </div>
 
                 <div>
                     <label class="block font-semibold">Photo :</label>
-                    <input name="file" id="add-file" type="file" class="w-full border rounded-lg px-3 py-2 mb-2" accept="image/*">
+                    <input name="file" id="add-file" type="file" class="w-full border rounded-lg px-3 py-2 mb-2" accept="image/*" required>
                 </div>
 
                 <div class="flex justify-between pt-2">
@@ -199,22 +199,9 @@
         }
 
         async function deleteAnimal(id) {
-            if (!confirm('Voulez-vous vraiment supprimer cet animal ?')) return;
-
-            try {
-                const res = await fetch(`/api/deleteanimal/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Accept': 'application/json' }
-                });
-
-                if (res.ok) {
-                    document.getElementById(`animal-${id}`).remove();
-                } else {
-                    alert('Erreur lors de la suppression.');
-                }
-            } catch (err) {
-                alert('Impossible de contacter le serveur.');
-            }
+            fetch(`/api/deleteanimal/${id}`, {
+                method: 'DELETE'
+            });
         }
     </script>
 
