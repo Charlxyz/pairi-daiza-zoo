@@ -191,7 +191,16 @@ def logout():
     return redirect(url_for('acceuil'))
 
 @app.route('/ticket/<string:ticket_uuid>/qrcode')
+@login_required
 def ticket_qrcode(ticket_uuid):
+    if current_user.role != 'admin':
+        flash("Vous n'avez pas la permissions de scanner votre QR Code", 'danger')
+        return redirect(url_for('acceuil'))
+    
+    if ticket_uuid in ['', None]:
+        flash("Votre QR Code n'est pas valide", 'erreur')
+        return redirect(url_for('acceuil'))
+    
     # Génération du QR code en mémoire
     img = qrcode.make(ticket_uuid)
     buffer = io.BytesIO()
@@ -209,10 +218,19 @@ def compte():
 @app.route("/checktickets")
 @login_required
 def checktickets():
+    if current_user.role != 'admin':
+        flash("Vous n'avez pas les permissions pour accéder a cette page", 'danger')
+        return redirect(url_for('acceuil'))
+    
     return render_template("checktickets.html")
 
 @app.route('/check_ticket/<string:ticket_uuid>')
+@login_required
 def check_ticket(ticket_uuid):
+    if current_user.role != 'admin':
+        flash("Vous n'avez pas les permissions pour accéder a cette page", 'danger')
+        return redirect(url_for('acceuil'))
+
     ticket = Tickets.query.filter_by(uuid=ticket_uuid).first()
     
     # Ticket non trouvé
@@ -329,6 +347,7 @@ def delete_animal(animal_id):
     db.session.delete(animal)
     db.session.commit()
     flash('Animal supprimé avec succès.', 'success')
+    return redirect(url_for('animal'))
 
 @app.route('/api/editanimal/<int:animal_id>', methods=['POST', 'GET'])
 @login_required
@@ -337,13 +356,13 @@ def edit_animal(animal_id):
         flash('Méthode non autorisée.', 'danger')
         return redirect(url_for('animal'))
 
+    if current_user.role not in ['admin', 'soigneur']:
+        flash("Vous n'êtes pas autorisé à modifier cet animal.", 'danger')
+        return redirect(url_for('animal'))
+
     animal = db.session.get(Animal, animal_id)
     if not animal:
         flash('Animal non trouvé.', 'erreur')
-        return redirect(url_for('animal'))
-
-    if current_user.role not in ['admin', 'soigneur']:
-        flash("Vous n'êtes pas autorisé à modifier cet animal.", 'danger')
         return redirect(url_for('animal'))
 
     nom = request.form.get('nom')
@@ -407,7 +426,7 @@ def addevent():
 
     return render_template('addevents.html')
 
-@app.route('/deletevents', methods=['POST'])
+@app.route('/deletevents', methods=['POST', 'GET'])
 @login_required
 def deletevents():
     if request.method == 'GET':
@@ -462,7 +481,12 @@ def evenement():
     return render_template("evenement.html")
 
 @app.route("/soins")
+@login_required
 def soins():
+    if current_user.role not in ['soigneur', 'admin']:
+        flash("Vous n'avez pas les permissions pour accéder a cette page", 'danger')
+        return redirect(url_for('acceuil'))
+
     soins = Soin.query.all()
     animaux = Animal.query.all()
     soigneurs = Soigneur.query.all()
@@ -498,6 +522,10 @@ def add_soins():
     flash("Soin ajouté avec succès.", 'success')
 
     return redirect(url_for('soins'))
+
+@app.route('/map')
+def map():
+    return render_template('map.html')
 
 @app.errorhandler(404)
 def page_not_found(e):
