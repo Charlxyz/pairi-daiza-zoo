@@ -90,7 +90,18 @@
                     
                     const times = document.createElement('div');
                     times.className = 'text-sm text-gray-600';
-                    times.textContent = `${event.start} → ${event.end}`;
+                    // Affiche les dates de début/fin de l'événement (format français lisible)
+                    const opts = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                    const start = event.start ? new Date(event.start) : null;
+                    const end = event.end ? new Date(event.end) : null;
+
+                    if (start && end) {
+                        times.textContent = `${start.toLocaleString('fr-FR', opts)} — ${end.toLocaleString('fr-FR', opts)}`;
+                    } else if (start) {
+                        times.textContent = `${start.toLocaleString('fr-FR', opts)}`;
+                    } else {
+                        times.textContent = 'Date inconnue';
+                    }
                     
                     label.appendChild(title);
                     label.appendChild(times);
