@@ -221,10 +221,15 @@
         }
 
         async function deleteAnimal(id) {
-            fetch(`/api/deleteanimal/${id}`, {
-                method: 'DELETE'
-            });
+            if (!confirm("Supprimer cet animal ?")) return;
+
+            const res = await fetch(`/api/deleteanimal/${id}`, { method: "DELETE" });
+
+            if (res.ok) {
+                window.location.reload(); // Recharge -> Flask affiche le flash
+            }
         }
+
     </script>
 
 </body>

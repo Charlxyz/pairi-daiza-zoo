@@ -357,7 +357,7 @@ def delete_animal(animal_id):
     db.session.delete(animal)
     db.session.commit()
     flash('Animal supprimé avec succès.', 'success')
-    return redirect(url_for('animal'))
+    return jsonify({"success": True}), 200
 
 @app.route('/api/editanimal/<int:animal_id>', methods=['POST', 'GET'])
 @login_required
