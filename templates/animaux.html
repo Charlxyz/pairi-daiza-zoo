@@ -51,13 +51,24 @@
                     <span class="font-semibold">ENCLÔT :</span>
                     <span class="text-gray-800">{{ animau.enclot if animau.enclot else 'N/A' }}</span>
                 </p>
+
+                <p>
+                    <span class="font-semibold">ZONE :</span>
+                    <span class="text-gray-800">{{ animau.zone }}</span>
+                </p>
             </div>
 
             <!-- Boutons -->
             {% if current_user.role in ['admin', 'soigneur'] %}
             <div class="absolute bottom-6 right-6 flex space-x-3">
                 <button
-                    onclick="openModal('{{ animau.nom }}', '{{ animau.arrive }}', '{{ animau.espèce }}', '{{ animau.enclot }}', '{{ animau.depart }}', '{{ animau.id }}')"
+                onclick="openModal('{{ animau.nom }}',
+                                '{{ animau.arrive }}',
+                                '{{ animau.espèce }}',
+                                '{{ animau.enclot }}',
+                                '{{ animau.depart }}',
+                                '{{ animau.id }}',
+                                '{{ animau.zone }}')"
                     class="bg-green-400 hover:bg-green-500 transition text-white font-semibold px-6 py-2 rounded-lg">
                     MODIFIER
                 </button>
@@ -95,13 +106,18 @@
                 </div>
 
                 <div>
+                    <label class="block font-semibold">Enclôt :</label>
+                    <input id="modal-enclot" name="enclot" type="text" class="w-full border rounded-lg px-3 py-2">
+                </div>
+
+                <div>
                     <label class="block font-semibold">Race :</label>
                     <input id="modal-race" name="race" type="text" class="w-full border rounded-lg px-3 py-2">
                 </div>
 
                 <div>
-                    <label class="block font-semibold">Enclôt :</label>
-                    <input id="modal-enclot" name="enclot" type="text" class="w-full border rounded-lg px-3 py-2">
+                    <label class="block font-semibold">Zone :</label>
+                    <input id="modal-zone" name="zone" type="text" class="w-full border rounded-lg px-3 py-2">
                 </div>
 
                 <div class="flex justify-between pt-2">
@@ -148,6 +164,11 @@
                 </div>
 
                 <div>
+                    <label class="block font-semibold">Zone :</label>
+                    <input name="zone" id="add-zone" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="Ex : Afrique" required>
+                </div>
+
+                <div>
                     <label class="block font-semibold">Photo :</label>
                     <input name="file" id="add-file" type="file" class="w-full border rounded-lg px-3 py-2 mb-2" accept="image/*" required>
                 </div>
@@ -168,7 +189,7 @@
 
     <!-- SCRIPTS -->
     <script>
-        function openModal(nom, arrivee, race, enclot, depart, id) {
+        function openModal(nom, arrivee, race, enclot, depart, id, zone) {
             const modal = document.getElementById("editModal");
             modal.classList.remove("hidden");
             modal.classList.add("flex");
@@ -178,6 +199,7 @@
             document.getElementById("modal-race").value = race;
             document.getElementById("modal-enclot").value = enclot;
             document.getElementById("modal-depart").value = depart || "";
+            document.getElementById("modal-zone").value = zone;
 
             document.getElementById("editForm").action = `/api/editanimal/${id}`;
         }
