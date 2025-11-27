@@ -38,6 +38,7 @@ class Animal(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String(80), nullable=False)
     enclot = db.Column(db.String(80), nullable=False)
+    zone = db.Column(db.String(100), nullable=False)
     espèce = db.Column(db.String(80), nullable=False)
     arrive = db.Column(db.String(80), nullable=False)
     depart = db.Column(db.String(80))
@@ -276,8 +277,14 @@ def book():
 
 @app.route('/animals')
 def animal():
-    animaux = Animal.query.all()
-    return render_template("animaux.html", animaux=animaux)
+    zone = request.args.get('zone')
+
+    if zone:
+        animaux = Animal.query.filter(Animal.zone.ilike(f"%{zone}%")).all()
+    else:
+        animaux = Animal.query.all()
+
+    return render_template("animaux.html", animaux=animaux, zone=zone)
 
 @app.route('/api/addanimal', methods=['POST', 'GET'])
 @login_required
@@ -294,6 +301,8 @@ def add_animals():
     race = request.form['race']
     enclot = request.form['enclot']
     arrive = request.form['arrive']
+    zone = request.form['zone']
+
     depart = request.form.get('depart')
 
     image = request.files.get('file')
@@ -309,6 +318,7 @@ def add_animals():
         nom=nom,
         espèce=race,
         enclot=enclot,
+        zone=zone,
         arrive=arrive,
         depart=depart,
         image=image_filename
@@ -371,6 +381,7 @@ def edit_animal(animal_id):
     arrive = request.form.get('arrive')
     depart = request.form.get('depart')
     enclot = request.form.get('enclot')
+    zone = request.form.get('zone')
 
     if nom:
         animal.nom = nom
@@ -384,6 +395,8 @@ def edit_animal(animal_id):
         animal.depart = depart or None
     if enclot:
         animal.enclot = enclot
+    if zone:
+        animal.zone = zone
 
     db.session.commit()
     return redirect(url_for('animal'))
