@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>À propos</title>
+    <title>Plan du Zoo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" href="../static/images/logo2.png" type="image/x-icon">
+
+    <!-- Script pour rendre l'image map responsive -->
     <script>
     document.addEventListener("DOMContentLoaded", function () {
 
-        // Trouve toutes les images utilisant un usemap
         const images = document.querySelectorAll("img[usemap]");
 
         images.forEach(img => {
@@ -20,7 +21,6 @@
 
                 const scale = img.clientWidth / img.naturalWidth;
 
-                // Réception des coordonnées d'origine
                 map.querySelectorAll("area").forEach(area => {
                     const original = area.dataset.originalCoords.split(',').map(Number);
                     const scaled = original.map(c => c * scale);
@@ -28,7 +28,6 @@
                 });
             }
 
-            // Stocke les coordonnées initiales
             const mapName = img.getAttribute("usemap").replace("#", "");
             const map = document.querySelector('map[name="' + mapName + '"]');
             if (map) {
@@ -37,27 +36,93 @@
                 });
             }
 
-            // Redimensionnement au chargement
             resizeImageMap();
-
-            // Redimensionnement quand la fenêtre change
             window.addEventListener("resize", resizeImageMap);
         });
     });
     </script>
 </head>
-<body class="bg-gray-100 text-gray-800">
+
+<body class="bg-[#EDE3E3] text-gray-800">
 
     {% include '/components/nav.html' %}
-    
-    <div class="flex justify-center items-center min-h-screen p-4">
-        <img src="./static/images/plan.jpg" usemap="#map1" class="max-w-2xl w-full h-auto rounded-lg">
+
+    <!-- HEADER AVEC IMAGE -->
+    <div class="relative w-full h-[50vh]">
+        <img src="./static/images/Lion2.jpg"
+             class="absolute w-full h-full object-cover inset-0"
+             alt="Plan du zoo">
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <div class="absolute inset-0 flex flex-col justify-center items-center text-center text-white">
+            <h1 class="text-6xl font-extrabold drop-shadow-xl">Plan du zoo</h1>
+            <p class="text-xl mt-4 max-w-2xl drop-shadow-lg">
+                Explorez nos différentes zones thématiques et découvrez les habitats des animaux.
+            </p>
+        </div>
     </div>
 
+    <!-- CONTENU PRINCIPAL -->
+    <section class="w-full py-16 px-5 flex justify-center">
+        <div class="bg-white w-full max-w-6xl p-12 rounded-3xl shadow-2xl border border-gray-300">
+
+            <!-- TEXTE INTRODUCTIF -->
+            <p class="text-gray-700 text-lg leading-relaxed mb-10 text-center max-w-3xl mx-auto">
+                Notre zoo est divisé en plusieurs zones immersives, chacune inspirée d’un écosystème réel.
+                Cliquez directement sur la carte pour accéder aux animaux présents dans les différentes régions :
+                désert du Sahara, savane africaine, montagnes, cascades et bien plus encore.
+            </p>
+
+            <!-- IMAGE DU PLAN -->
+            <div class="flex justify-center items-center">
+                <img src="./static/images/plan.jpg"
+                     usemap="#map1"
+                     class="w-full max-w-4xl h-auto rounded-2xl shadow-lg">
+            </div>
+
+            <!-- LÉGENDE -->
+            <div class="mt-12 text-center">
+                <h2 class="text-3xl font-bold text-green-700">Zones principales du parc</h2>
+                <p class="text-gray-600 mt-4">Cliquez sur une zone du plan pour explorer les animaux correspondants.</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+
+                    <div class="bg-green-50 p-5 rounded-xl shadow">
+                        <h3 class="font-semibold text-green-700 text-lg">🌵 Sahara</h3>
+                        <p class="text-gray-600 text-sm mt-1">Reptiles, fennecs, dromadaires…</p>
+                    </div>
+
+                    <div class="bg-green-50 p-5 rounded-xl shadow">
+                        <h3 class="font-semibold text-green-700 text-lg">🐘 Afrique</h3>
+                        <p class="text-gray-600 text-sm mt-1">Éléphants, girafes, lions…</p>
+                    </div>
+
+                    <div class="bg-green-50 p-5 rounded-xl shadow">
+                        <h3 class="font-semibold text-green-700 text-lg">🦁 Savane</h3>
+                        <p class="text-gray-600 text-sm mt-1">Herbivores, prédateurs, troupeaux…</p>
+                    </div>
+
+                    <div class="bg-green-50 p-5 rounded-xl shadow">
+                        <h3 class="font-semibold text-green-700 text-lg">⛰️ Montagne</h3>
+                        <p class="text-gray-600 text-sm mt-1">Bouquetins, loups, yaks…</p>
+                    </div>
+
+                    <div class="bg-green-50 p-5 rounded-xl shadow">
+                        <h3 class="font-semibold text-green-700 text-lg">💧 Cascade</h3>
+                        <p class="text-gray-600 text-sm mt-1">Animaux aquatiques et forêts humides.</p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- MAP DES ZONES (coordonnées conservées ) -->
     <map name="map1">
         <area href="/animals?zone=Sahara" alt="sahara" title="sahara" coords="3442,1845,3739,1941,3919,1762,3884,1608,4076,1481,4304,1495,4348,1573,4536,1508,4685,1508,4773,1039,4238,960,3792,1039,3639,986,3100,925,2995,1153,2885,1258,2850,1407,2920,1547,2938,1714,3122,1832,3201,1906,3402,1906" shape="poly">
         <area href="/animals?zone=Afrique" alt="afrique" title="afrique" coords="2899,1670,2829,1376,2956,1153,3034,986,2575,719,2338,978,2474,1083,2325,1420,2027,1525,1865,1503,1751,1438,1646,1205,1506,1258,1480,1398,1305,1411,1541,1569,1756,1648,1909,1744,2054,1819,2272,1871,2378,1722,2570,1635,2675,1582" shape="poly">
-        <area href="/animals?zone=Savane" alt="savane" title="savavne" coords="2325,951,2553,702,2413,575,2404,470,2185,325,1756,592,1423,627,1160,807,1103,929,1226,1105,1419,1140,1515,1197,1629,1188,1659,1061,1813,1065,1935,1140,2211,1048" shape="poly">
+        <area href="/animals?zone=Savane" alt="savane" title="savane" coords="2325,951,2553,702,2413,575,2404,470,2185,325,1756,592,1423,627,1160,807,1103,929,1226,1105,1419,1140,1515,1197,1629,1188,1659,1061,1813,1065,1935,1140,2211,1048" shape="poly">
         <area href="/animals?zone=Montagne" alt="montagne" title="montagne" coords="3078,1836,3078,2235,3498,2230,4081,2055,4379,2108,4554,1990,4659,1538,4335,1573,4287,1499,4081,1495,3901,1608,3928,1749,3783,1924,3722,1963,3534,1915,3446,1924,3284,1941,3144,1915" shape="poly">
         <area href="/animals?zone=Cascade" alt="cascade" title="cascade" coords="3061,1854,3061,2222,2535,2520,2395,2379,2124,2344,1856,2068,1370,1854,1173,1683,933,1280,889,1070,1099,864,1095,960,1147,1065,1222,1135,1322,1144,1467,1188,1467,1363,1265,1385,1265,1429,1874,1792,2277,1906,2373,1762,2627,1626,2890,1714" shape="poly">
     </map>
