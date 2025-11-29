@@ -39,7 +39,6 @@
                             <td class="py-3 px-4">{{ soin.date.strftime('%d/%m/%Y') }}</td>
                             <td class="py-3 px-4">{{ soin.description }}</td>
 
-                            <!-- ACTION BUTTONS -->
                             <td class="py-3 px-4 space-x-2">
                                 <button
                                     onclick="document.getElementById('modalEdit{{ soin.id }}').classList.remove('hidden')"
@@ -56,7 +55,6 @@
                             </td>
                         </tr>
 
-                        <!-- MODALE MODIFICATION -->
                         <div id="modalEdit{{ soin.id }}"
                              class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center">
                             <div class="bg-white rounded-xl shadow-lg w-[450px] p-6">
@@ -114,7 +112,6 @@
     </button>
     {% endif %}
 
-    <!-- MODALE AJOUT SOIN -->
     <div id="modalAddSoin"
          class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center">
         <div class="bg-white rounded-xl shadow-lg w-[450px] p-6">
