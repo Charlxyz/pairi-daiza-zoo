@@ -11,63 +11,70 @@
     <link rel="icon" href="../static/images/logo2.png" type="image/x-icon">
     {% include '/components/calendar.html' %}
 </head>
-<body class="w-full h-screen bg-[#EDE3E3]">
+
+<body class="bg-[#EDE3E3]">
 
     {% include '/components/nav.html' %}
 
-    <div class="w-full h-full relative">
-        <img class="w-full absolute inset-0 object-cover" src="./static/images/Lion2.jpg" alt="bg">
-        <div class="absolute right-1/4 top-1/2 -translate-y-1/2 translate-x-20 text-4xl font-bold flex items-center flex-col">
-          <h1>Bienvenue</h1>
-      <h2>Au zoo de Daiza Pairi</h2>
-        <button onclick="document.getElementById('page1').scrollIntoView({behavior: 'smooth'});"
-          class="bg-green-500/70 rounded-lg p-2 text-white mt-5 cursor-pointer hover:bg-green-600/80 transition duration-300">
-            <i class="fa-solid fa-arrow-down"></i>
-              Nous découvrir
-            <i class="fa-solid fa-arrow-down"></i>
-        </button>
-      </div>
+    <div class="relative w-full h-[80vh]">
+        <img src="./static/images/header_about.png" class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
+            <h1 class="text-6xl font-extrabold drop-shadow-xl">Bienvenue</h1>
+            <h2 class="text-3xl mt-4 drop-shadow-lg">Au zoo de Daiza Pairi</h2>
+
+            <button onclick="document.getElementById('page1').scrollIntoView({behavior: 'smooth'});"
+                class="mt-8 bg-green-600/80 hover:bg-green-700 text-white px-6 py-3 rounded-xl text-lg flex items-center gap-3 transition">
+                <i class="fa-solid fa-arrow-down"></i>
+                Nous découvrir
+                <i class="fa-solid fa-arrow-down"></i>
+            </button>
+        </div>
     </div>
 
-<section class="w-full bg-[#EDE3E3] py-20 px-5 flex justify-center">
-  <div class="bg-white w-full h-full max-w-6xl rounded-3xl shadow-2xl p-14 border border-gray-300">
+    <section id="page1" class="w-full bg-[#EDE3E3] py-20 px-5 flex justify-center">
+        <div class="bg-white w-full max-w-6xl rounded-3xl shadow-2xl p-14 border border-gray-300">
 
-    <div class="text-center mb-14">
-      <h2 class="text-5xl font-extrabold mb-6 text-green-700 tracking-wide">
-        🌿 Bienvenue au Zoo Daiza Pairi
-      </h2>
-      <p class="text-xl leading-relaxed text-gray-700 max-w-4xl mx-auto">
-        Entrez dans un sanctuaire naturel unique en Europe, où chaque rencontre avec un animal est une découverte.
-        Ici, nous protégeons la biodiversité, célébrons la nature, et offrons à nos visiteurs
-        <span class="font-semibold">une expérience authentique, immersive et inoubliable.</span>
-      </p>
-    </div>
+            <div class="text-center mb-14">
+                <h2 class="text-5xl font-extrabold mb-6 text-green-700 tracking-wide">
+                    🌿 Bienvenue au Zoo Daiza Pairi
+                </h2>
+                <p class="text-xl leading-relaxed text-gray-700 max-w-4xl mx-auto">
+                    Entrez dans un sanctuaire naturel unique en Europe, où chaque rencontre avec un animal est une découverte.
+                    Ici, nous protégeons la biodiversité, célébrons la nature, et offrons à nos visiteurs
+                    <span class="font-semibold">une expérience authentique, immersive et inoubliable.</span>
+                </p>
+            </div>
 
-    <div class="mt-10 flex flex-wrap justify-center gap-6">
-      <a href="/animals" class="bg-green-600 hover:bg-green-700 text-white px-7 py-3 rounded-lg text-lg font-semibold shadow-lg transition duration-300">
-        🐾 Explorer les animaux
-      </a>
-      <a href="/events" class="bg-green-600 hover:bg-green-700 text-white px-7 py-3 rounded-lg text-lg font-semibold shadow-lg transition duration-300">
-        🎉 Événements à venir
-      </a>
-    </div>
+            <div class="mt-10 flex flex-wrap justify-center gap-6">
+                <a href="/animals" class="bg-green-600 hover:bg-green-700 text-white px-7 py-3 rounded-lg text-lg font-semibold shadow-lg transition">
+                    🐾 Explorer les animaux
+                </a>
+                <a href="/events" class="bg-green-600 hover:bg-green-700 text-white px-7 py-3 rounded-lg text-lg font-semibold shadow-lg transition">
+                    🎉 Événements à venir
+                </a>
+            </div>
 
-    <div class="w-full h-[2px] bg-gray-200 my-14"></div>
+            <div class="w-full h-[2px] bg-gray-200 my-14"></div>
 
-    <div class="text-center max-w-4xl mx-auto mb-16">
-      <p class="text-lg text-gray-700 leading-relaxed italic">
-        « Le Zoo de Daiza Pairi n’est pas seulement un lieu de visite,
-        c’est un voyage à travers les continents, les écosystèmes et les espèces qui peuplent notre planète. »
-      </p>
-    </div>
+            <div class="text-center max-w-4xl mx-auto mb-16">
+                <p class="text-lg text-gray-700 leading-relaxed italic">
+                    « Le Zoo de Daiza Pairi n’est pas seulement un lieu de visite,
+                    c’est un voyage à travers les continents, les écosystèmes et les espèces qui peuplent notre planète. »
+                </p>
+            </div>
 
-    <div id="page1" class="bg-[#EDE3E3] w-full h-full p-16 rounded-2xl">
-      <div class="flex items-center justify-center">
-          <div id="calendrierEvent" class="w-[600px] h-[550px] bg-white p-4 rounded-lg">
-              <div id="calendar"></div>
-          </div>
-      </div>
-    </div>
+            <div class="bg-[#EDE3E3] w-full p-16 rounded-2xl">
+                <div class="flex items-center justify-center">
+                    <div id="calendrierEvent" class="w-[600px] h-[550px] bg-white p-4 rounded-lg shadow">
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
 
     {% include '/components/flash.html' %}
 
