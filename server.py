@@ -591,6 +591,10 @@ def delete_soins(soin_id):
 def map():
     return render_template('map.html')
 
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")
+
 @app.errorhandler(404)
 def page_not_found(e):
     flash("La page que vous recherchez n'existe pas.", 'erreur')
