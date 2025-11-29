@@ -23,16 +23,13 @@
         </button>
         {% endif %}
 
-        <!-- CARTES ANIMAUX -->
         {% for animau in animaux %}
-        <div id="animal-{{ animau.id }}" class="animal-card bg-[#DEDEDE] rounded-xl shadow flex items-center p-6 relative">
+        <div id="animal-{{ animau.id }}" class="animal-card bg-white rounded-xl shadow flex items-center p-6 relative">
             
-            <!-- Image -->
             <div class="w-32 h-32 bg-[#262626] rounded-xl flex items-center justify-center">
                 <img src="../static/uploads/{{ animau.image }}" alt="photo animal" width="128" height="128" class="object-cover rounded-xl">
             </div>
 
-            <!-- Informations -->
             <div class="ml-6 space-y-3">
                 <p>
                     <span class="font-semibold">NOM :</span>
@@ -58,7 +55,6 @@
                 </p>
             </div>
 
-            <!-- Boutons -->
             {% if current_user.role in ['admin', 'soigneur'] %}
             <div class="absolute bottom-6 right-6 flex space-x-3">
                 <button
@@ -85,7 +81,6 @@
 
     </div>
 
-    <!-- MODAL MODIFICATION -->
     <div id="editModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
         <div class="bg-white p-6 rounded-xl shadow-xl w-[350px]">
             <h2 class="text-xl font-bold mb-4">Modifier l'animal</h2>
@@ -132,7 +127,6 @@
         </div>
     </div>
 
-    <!-- MODAL AJOUT ANIMAL -->
     <div id="addModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden items-center justify-center z-50">
         <div class="bg-white p-6 rounded-xl shadow-xl w-[350px]">
             <h2 class="text-xl font-bold mb-4">Ajouter un animal</h2>
@@ -193,7 +187,6 @@
 
     {% include '/components/flash.html' %}
 
-    <!-- SCRIPTS -->
     <script>
         function openModal(nom, arrivee, race, enclot, depart, id, zone) {
             const modal = document.getElementById("editModal");
@@ -232,7 +225,7 @@
             const res = await fetch(`/api/deleteanimal/${id}`, { method: "DELETE" });
 
             if (res.ok) {
-                window.location.reload(); // Recharge -> Flask affiche le flash
+                window.location.reload();
             }
         }
 
