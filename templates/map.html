@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" href="../static/images/logo2.png" type="image/x-icon">
 
-    <!-- Script pour rendre l'image map responsive -->
     <script>
     document.addEventListener("DOMContentLoaded", function () {
 
@@ -47,7 +46,6 @@
 
     {% include '/components/nav.html' %}
 
-    <!-- HEADER AVEC IMAGE -->
     <div class="relative w-full h-[50vh]">
         <img src="./static/images/Lion2.jpg"
              class="absolute w-full h-full object-cover inset-0"
@@ -62,25 +60,21 @@
         </div>
     </div>
 
-    <!-- CONTENU PRINCIPAL -->
     <section class="w-full py-16 px-5 flex justify-center">
         <div class="bg-white w-full max-w-6xl p-12 rounded-3xl shadow-2xl border border-gray-300">
 
-            <!-- TEXTE INTRODUCTIF -->
             <p class="text-gray-700 text-lg leading-relaxed mb-10 text-center max-w-3xl mx-auto">
                 Notre zoo est divisé en plusieurs zones immersives, chacune inspirée d’un écosystème réel.
                 Cliquez directement sur la carte pour accéder aux animaux présents dans les différentes régions :
                 désert du Sahara, savane africaine, montagnes, cascades et bien plus encore.
             </p>
 
-            <!-- IMAGE DU PLAN -->
             <div class="flex justify-center items-center">
                 <img src="./static/images/plan.jpg"
                      usemap="#map1"
                      class="w-full max-w-4xl h-auto rounded-2xl shadow-lg">
             </div>
 
-            <!-- LÉGENDE -->
             <div class="mt-12 text-center">
                 <h2 class="text-3xl font-bold text-green-700">Zones principales du parc</h2>
                 <p class="text-gray-600 mt-4">Cliquez sur une zone du plan pour explorer les animaux correspondants.</p>
@@ -118,7 +112,6 @@
         </div>
     </section>
 
-    <!-- MAP DES ZONES (coordonnées conservées ) -->
     <map name="map1">
         <area href="/animals?zone=Sahara" alt="sahara" title="sahara" coords="3442,1845,3739,1941,3919,1762,3884,1608,4076,1481,4304,1495,4348,1573,4536,1508,4685,1508,4773,1039,4238,960,3792,1039,3639,986,3100,925,2995,1153,2885,1258,2850,1407,2920,1547,2938,1714,3122,1832,3201,1906,3402,1906" shape="poly">
         <area href="/animals?zone=Afrique" alt="afrique" title="afrique" coords="2899,1670,2829,1376,2956,1153,3034,986,2575,719,2338,978,2474,1083,2325,1420,2027,1525,1865,1503,1751,1438,1646,1205,1506,1258,1480,1398,1305,1411,1541,1569,1756,1648,1909,1744,2054,1819,2272,1871,2378,1722,2570,1635,2675,1582" shape="poly">
