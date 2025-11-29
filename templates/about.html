@@ -5,11 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>À propos</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="../static/images/logo2.png" type="image/x-icon">
 </head>
-<body class="bg-gray-100 text-gray-800">
+
+<body class="w-full min-h-screen bg-[#EDE3E3]">
 
     {% include '/components/nav.html' %}
+
+    <!-- HEADER AVEC IMAGE -->
+    <div class="relative w-full h-[60vh]">
+        <img src="./static/images/header_about.png" 
+             class="absolute inset-0 w-full h-full object-cover"
+             alt="zoo">
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
+            <h1 class="text-6xl font-extrabold drop-shadow-xl">À propos de notre zoo</h1>
+            <p class="text-xl mt-4 max-w-2xl drop-shadow-lg">
+                Découvrez l’histoire, la mission et les valeurs qui façonnent chaque jour le Zoo Daiza Pairi.
+            </p>
+        </div>
+    </div>
+
+    <!-- SECTION PRINCIPALE -->
+    <section class="w-full py-20 px-5 flex justify-center">
+        <div class="bg-white max-w-5xl w-full rounded-3xl shadow-2xl p-12 border border-gray-300">
+
+            <!-- HISTOIRE -->
+            <h2 class="text-4xl font-bold text-green-700 mb-6">🌱 Notre histoire</h2>
+            <p class="text-gray-700 text-lg leading-relaxed mb-10">
+                Fondé il y a plusieurs décennies, le Zoo Daiza Pairi est né d’un rêve : créer un lieu
+                où les humains et les animaux pourraient coexister dans un environnement harmonieux.
+                Au fil du temps, notre parc s’est agrandi, accueillant de nouvelles espèces, de nouveaux paysages,
+                ainsi que de vastes zones de conservation destinées à la protection de la biodiversité mondiale.
+            </p>
+
+            <!-- VALEURS -->
+            <h2 class="text-4xl font-bold text-green-700 mb-6">🌍 Nos valeurs</h2>
+            <ul class="list-disc list-inside text-gray-700 text-lg space-y-3 mb-10">
+                <li><span class="font-semibold">Respect du vivant :</span> chaque animal est traité avec dignité, soin et attention.</li>
+                <li><span class="font-semibold">Éducation :</span> nous offrons aux visiteurs une expérience pédagogique unique, adaptée à tous les âges.</li>
+                <li><span class="font-semibold">Protection :</span> notre zoo soutient activement des programmes internationaux
+                    de sauvegarde d’espèces menacées.</li>
+                <li><span class="font-semibold">Immersion :</span> nos habitats sont conçus pour reproduire fidèlement les environnements naturels.</li>
+            </ul>
+
+            <!-- MISSION -->
+            <h2 class="text-4xl font-bold text-green-700 mb-6">🎯 Notre mission</h2>
+            <p class="text-gray-700 text-lg leading-relaxed mb-10">
+                Notre mission est d’agir comme un véritable refuge pour les animaux du monde entier.
+                Nous cherchons non seulement à les protéger, mais également à sensibiliser le public à leur fragilité.
+                Chaque visite contribue directement à la préservation d’espèces menacées, aux programmes de reproduction,
+                et aux actions menées sur le terrain par nos équipes.
+            </p>
+
+            <!-- CHIFFRES -->
+            <h2 class="text-4xl font-bold text-green-700 mb-6">📊 Quelques chiffres</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                <div class="text-center p-6 bg-green-50 rounded-xl shadow">
+                    <p class="text-5xl font-extrabold text-green-700">+400</p>
+                    <p class="text-gray-700 mt-2">Espèces animales</p>
+                </div>
+                <div class="text-center p-6 bg-green-50 rounded-xl shadow">
+                    <p class="text-5xl font-extrabold text-green-700">75 ha</p>
+                    <p class="text-gray-700 mt-2">De nature préservée</p>
+                </div>
+                <div class="text-center p-6 bg-green-50 rounded-xl shadow">
+                    <p class="text-5xl font-extrabold text-green-700">+1M</p>
+                    <p class="text-gray-700 mt-2">Visiteurs par an</p>
+                </div>
+            </div>
+
+            <!-- ENGAGEMENT -->
+            <h2 class="text-4xl font-bold text-green-700 mb-6">🤝 Notre engagement</h2>
+            <p class="text-gray-700 text-lg leading-relaxed mb-10">
+                Chaque jour, nos équipes travaillent avec passion pour offrir aux animaux les
+                meilleures conditions de vie possibles. Nous collaborons avec des biologistes, vétérinaires,
+                organisations internationales et centres de recherche afin de renforcer nos actions et participer
+                à un avenir durable pour les générations futures.
+            </p>
+
+            <div class="text-center mt-16">
+                <a href="/contact"
+                   class="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-xl font-semibold shadow-xl transition duration-300">
+                    Nous contacter
+                </a>
+            </div>
+
+        </div>
+    </section>
 
     {% include '/components/flash.html' %}
 
