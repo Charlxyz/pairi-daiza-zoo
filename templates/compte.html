@@ -86,7 +86,6 @@
         </table>
       </div>
 
-      <!-- Modal QR Code -->
       <div id="qrModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 text-center">
           <h3 class="text-xl font-bold mb-4">QR Code du ticket</h3>
@@ -110,7 +109,6 @@
           modal.classList.add('hidden');
         }
 
-        // Fermer la modal en cliquant en dehors
         document.getElementById('qrModal').addEventListener('click', function(e) {
           if (e.target === this) {
             closeQRCode();
