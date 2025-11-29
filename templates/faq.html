@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="../static/images/logo2.png" type="image/x-icon">
+</head>
+
+<body class="bg-[#EDE3E3]">
+
+    {% include '/components/nav.html' %}
+
+    <div class="relative w-full h-[60vh]">
+        <img src="./static/images/header_about.png" class="absolute inset-0 w-full h-full object-cover">
+        <div class="absolute inset-0 bg-black/40"></div>
+
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white">
+            <h1 class="text-5xl font-extrabold drop-shadow-xl">FAQ</h1>
+            <p class="text-xl mt-4 opacity-90">Vos questions les plus fréquentes</p>
+        </div>
+    </div>
+
+    <section class="w-full py-20 px-5 flex justify-center">
+        <div class="bg-white w-full max-w-5xl rounded-3xl shadow-2xl p-12 border border-gray-300">
+
+            <h2 class="text-4xl font-bold text-center text-green-700 mb-10">Questions fréquentes</h2>
+
+            <div class="space-y-6">
+
+                <div class="border border-gray-300 rounded-xl">
+                    <button class="faq-button w-full flex justify-between p-5 text-lg font-semibold">
+                        <span>Quels sont les horaires d’ouverture du zoo ?</span>
+                        <i class="fa-solid fa-chevron-down transition"></i>
+                    </button>
+                    <div class="faq-content hidden px-5 pb-5 text-gray-700">
+                        Notre zoo est ouvert tous les jours de 9h à 18h. En été, les horaires s’étendent jusqu’à 20h.
+                    </div>
+                </div>
+
+                <div class="border border-gray-300 rounded-xl">
+                    <button class="faq-button w-full flex justify-between p-5 text-lg font-semibold">
+                        <span>Peut-on acheter les billets en ligne ?</span>
+                        <i class="fa-solid fa-chevron-down transition"></i>
+                    </button>
+                    <div class="faq-content hidden px-5 pb-5 text-gray-700">
+                        Oui, les billets sont disponibles sur notre site. L’achat en ligne permet d’éviter les files d’attente.
+                    </div>
+                </div>
+
+                <div class="border border-gray-300 rounded-xl">
+                    <button class="faq-button w-full flex justify-between p-5 text-lg font-semibold">
+                        <span>Les animaux sont-ils visibles toute la journée ?</span>
+                        <i class="fa-solid fa-chevron-down transition"></i>
+                    </button>
+                    <div class="faq-content hidden px-5 pb-5 text-gray-700">
+                        Cela dépend des espèces. Certains animaux dorment ou se reposent durant certaines heures, mais la plupart restent visibles.
+                    </div>
+                </div>
+
+                <div class="border border-gray-300 rounded-xl">
+                    <button class="faq-button w-full flex justify-between p-5 text-lg font-semibold">
+                        <span>Les pique-niques sont-ils autorisés dans le parc ?</span>
+                        <i class="fa-solid fa-chevron-down transition"></i>
+                    </button>
+                    <div class="faq-content hidden px-5 pb-5 text-gray-700">
+                        Oui, plusieurs zones de pique-nique sont aménagées dans le parc. Il est toutefois interdit de nourrir les animaux.
+                    </div>
+                </div>
+
+                <div class="border border-gray-300 rounded-xl">
+                    <button class="faq-button w-full flex justify-between p-5 text-lg font-semibold">
+                        <span>Proposez-vous des visites guidées ?</span>
+                        <i class="fa-solid fa-chevron-down transition"></i>
+                    </button>
+                    <div class="faq-content hidden px-5 pb-5 text-gray-700">
+                        Nous proposons des visites guidées sur réservation, ainsi que des ateliers pédagogiques pour les écoles.
+                    </div>
+                </div>
+
+                <div class="border border-gray-300 rounded-xl">
+                    <button class="faq-button w-full flex justify-between p-5 text-lg font-semibold">
+                        <span>Y a-t-il un parking sur place ?</span>
+                        <i class="fa-solid fa-chevron-down transition"></i>
+                    </button>
+                    <div class="faq-content hidden px-5 pb-5 text-gray-700">
+                        Oui, un parking gratuit est disponible pour les visiteurs, avec des places réservées aux personnes à mobilité réduite.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    {% include '/components/flash.html' %}
+
+    <script>
+        const buttons = document.querySelectorAll(".faq-button");
+        buttons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const content = btn.nextElementSibling;
+                const icon = btn.querySelector("i");
+                content.classList.toggle("hidden");
+                icon.classList.toggle("rotate-180");
+            });
+        });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js"></script>
+
+</body>
+</html>

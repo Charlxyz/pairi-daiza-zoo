@@ -595,6 +595,10 @@ def map():
 def contact():
     return render_template("contact.html")
 
+@app.route("/faq")
+def faq():
+    return render_template("faq.html")
+
 @app.errorhandler(404)
 def page_not_found(e):
     flash("La page que vous recherchez n'existe pas.", 'erreur')
