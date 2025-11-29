@@ -192,9 +192,6 @@ def logout():
 @app.route('/ticket/<string:ticket_uuid>/qrcode')
 @login_required
 def ticket_qrcode(ticket_uuid):
-    if current_user.role != 'admin':
-        flash("Vous n'avez pas la permissions de scanner votre QR Code", 'danger')
-        return redirect(url_for('acceuil'))
     
     if ticket_uuid in ['', None]:
         flash("Votre QR Code n'est pas valide", 'erreur')
