@@ -114,6 +114,44 @@ def date_humaine(value):
 def acceuil():
     return render_template("accueil.html")
 
+@app.route("/search")
+def search():
+    query = request.args.get("q", "").strip()
+
+    results = []
+
+    if query:
+        animals = Animal.query.filter(Animal.nom.ilike(f"%{query}%")).all()
+        animals_enclos = Animal.query.filter(Animal.enclot.ilike(f"%{query}%")).all()
+        animals_zone = Animal.query.filter(Animal.zone.ilike(f"%{query}%")).all()
+        events = Event.query.filter(Event.title.ilike(f"%{query}%")).all()
+
+        for a in animals:
+            results.append({
+                "label": f"Animal : {a.nom}",
+                "url": f"/animals?nom={a.nom}"
+            })
+
+        for e in events:
+            results.append({
+                "label": f"Événement : {e.title}",
+                "url": f"/events"
+            })
+
+        for a in animals_enclos:
+            results.append({
+                "label": f"Enclos : {a.enclot}",
+                "url": f"/animals?enclot={a.enclot}"
+            })
+        
+        for a in animals_zone:
+            results.append({
+                "label": f"Zone : {a.zone}",
+                "url": f"/animals?zone={a.zone}"
+            })
+
+    return jsonify({"results": results})
+
 @app.route("/about")
 def about():
     return render_template("about.html")
@@ -274,10 +312,20 @@ def book():
 @app.route('/animals')
 def animal():
     zone = request.args.get('zone')
+    nom = request.args.get('nom')
+    enclot = request.args.get('enclot')
 
     if zone:
         animaux = Animal.query.filter(Animal.zone.ilike(f"%{zone}%")).all()
         return render_template("animaux.html", animaux=animaux, zone=zone)
+
+    if nom:
+        animaux = Animal.query.filter(Animal.nom.ilike(f"%{nom}%")).all()
+        return render_template("animaux.html", animaux=animaux, zone=None)
+
+    if enclot:
+        animaux = Animal.query.filter(Animal.enclot.ilike(f"%{enclot}%")).all()
+        return render_template("animaux.html", animaux=animaux, zone=None)
 
     if current_user.is_authenticated and current_user.role in ['admin', 'soigneur']:
         animaux = Animal.query.all()

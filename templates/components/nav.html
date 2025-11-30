@@ -1,26 +1,15 @@
 <nav class="bg-[#D9D9D9] w-full sticky top-0 z-50 shadow-md">
     <!-- Desktop header -->
     <div class="hidden md:flex items-center justify-between px-6 py-3 h-20 relative">
+
       <!-- Liens de gauche -->
       <div class="flex items-center space-x-4">
-        <a href="/book" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
-          Réserver
-        </a>
-        <a href="/animals" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
-          Nos animaux
-        </a>
-        <a href="/events" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
-          Événements
-        </a>
-        <a href="/map" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
-          Plan du parc
-        </a>
-        <a href="/about" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
-          À propos
-        </a>
-        <a href="/faq" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">
-          FAQ
-        </a>
+        <a href="/book" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">Réserver</a>
+        <a href="/animals" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">Nos animaux</a>
+        <a href="/events" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">Événements</a>
+        <a href="/map" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">Plan du parc</a>
+        <a href="/about" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">À propos</a>
+        <a href="/faq" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">FAQ</a>
       </div>
 
       <!-- Logo centré -->
@@ -32,38 +21,44 @@
 
       <!-- Barre de recherche + compte -->
       <div class="flex items-center space-x-4">
-        <div class="relative">
-          <input
-            type="text"
-            placeholder="Rechercher..."
-            class="px-3 py-2 rounded-lg border border-gray-400 bg-[#EDE3E3] focus:outline-none focus:ring-2 focus:ring-green-500"
-          />
-          <button class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-green-600">
-            <i class="fas fa-search"></i>
-          </button>
+        
+        <!-- Barre de recherche (desktop) -->
+        <div class="relative w-64" id="searchContainer">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Rechercher..."
+                class="px-3 py-2 w-full rounded-lg border border-gray-400 bg-[#EDE3E3] focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+
+            <button class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-green-600">
+                <i class="fas fa-search"></i>
+            </button>
+
+            <!-- Résultats -->
+            <div id="searchResults" class="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-lg shadow-md mt-1 hidden z-50">
+                <!-- Items générés en JS -->
+            </div>
         </div>
+
+
         {% if current_user.is_authenticated %}
-          <a href="/compte" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
-            Mon compte
-          </a>
+          <a href="/compte" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">Mon compte</a>
         {% else %}
-          <a href="/login" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
-            Connexion
-          </a>
+          <a href="/login" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">Connexion</a>
         {% endif %}
       </div>
     </div>
 
     <!-- Mobile header -->
     <div class="md:hidden flex items-center justify-between px-4 py-3 h-20">
-      <!-- Logo (mobile) -->
-      <div class="flex items-center">
+      <div>
         <a href="/">
           <img src="./static/images/logo2.png" alt="logo" class="w-16 h-16 rounded-full object-cover">
         </a>
       </div>
 
-      <!-- Menu hamburger (mobile only) -->
+      <!-- Menu hamburger -->
       <button class="flex flex-col space-y-1.5 focus:outline-none" id="menuToggle">
         <span class="w-6 h-0.5 bg-black transition-all"></span>
         <span class="w-6 h-0.5 bg-black transition-all"></span>
@@ -71,58 +66,76 @@
       </button>
     </div>
 
-    <!-- Mobile menu (dropdown) -->
+    <!-- Mobile menu -->
     <div id="mobileMenu" class="hidden md:hidden bg-[#D9D9D9] border-t border-gray-300 pb-4">
       <div class="flex flex-col space-y-2 px-4">
-        <a href="/book" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">
-          Réserver
-        </a>
-        <a href="/animals" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">
-          Nos animaux
-        </a>
-        <a href="/events" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">
-          Événements
-        </a>
-        <a href="/map" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white">
-          Plan du parc
-        </a>
-        <a href="/about" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">
-          À propos
-        </a>
-        <a href="/faq" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">
-          FAQ
-        </a>
-        
-        <!-- Barre de recherche mobile -->
-        <div class="relative py-2">
-          <input
-            type="text"
+
+        <a href="/book" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">Réserver</a>
+        <a href="/animals" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">Nos animaux</a>
+        <a href="/events" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">Événements</a>
+        <a href="/map" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">Plan du parc</a>
+        <a href="/about" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">À propos</a>
+        <a href="/faq" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">FAQ</a>
+
+        <!-- Barre de recherche (mobile) -->
+        <form action="/search" method="GET" class="relative py-2">
+          <input 
+            type="text" 
+            name="q"
             placeholder="Rechercher..."
             class="w-full px-3 py-2 rounded-lg border border-gray-400 bg-[#EDE3E3] focus:outline-none focus:ring-2 focus:ring-green-500"
           />
-          <button class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-green-600">
+          <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-green-600">
             <i class="fas fa-search"></i>
           </button>
-        </div>
+        </form>
 
         {% if current_user.is_authenticated %}
-          <a href="/compte" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">
-            Mon compte
-          </a>
+          <a href="/compte" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">Mon compte</a>
         {% else %}
-          <a href="/login" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">
-            Connexion
-          </a>
+          <a href="/login" class="font-semibold px-4 py-2 rounded-full transition duration-300 hover:bg-green-500/70 hover:text-white block">Connexion</a>
         {% endif %}
       </div>
     </div>
-  </nav>
+</nav>
 
-  <script>
-    const menuToggle = document.getElementById('menuToggle');
-    const mobileMenu = document.getElementById('mobileMenu');
-    
-    menuToggle.addEventListener('click', function() {
-      mobileMenu.classList.toggle('hidden');
-    });
-  </script>
+<script>
+const input = document.getElementById("searchInput");
+const resultsBox = document.getElementById("searchResults");
+
+input.addEventListener("input", async function () {
+    const query = this.value.trim();
+
+    if (query.length < 2) {
+        resultsBox.classList.add("hidden");
+        return;
+    }
+
+    const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+    const data = await response.json();
+
+    // Vide les résultats
+    resultsBox.innerHTML = "";
+
+    if (data.results.length === 0) {
+        resultsBox.innerHTML = `<div class="p-3 text-gray-500">Aucun résultat</div>`;
+    } else {
+        data.results.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "p-3 hover:bg-gray-100 cursor-pointer border-b last:border-none";
+            div.innerHTML = item.label;
+            div.onclick = () => window.location.href = item.url;
+            resultsBox.appendChild(div);
+        });
+    }
+
+    resultsBox.classList.remove("hidden");
+});
+
+// Cache le menu si clic ailleurs
+document.addEventListener("click", (e) => {
+    if (!document.getElementById("searchContainer").contains(e.target)) {
+        resultsBox.classList.add("hidden");
+    }
+});
+</script>
