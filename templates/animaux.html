@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Accueil</title>
+  <title>Animaux</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="icon" href="../static/images/logo2.png" type="image/x-icon">
@@ -112,7 +112,13 @@
 
                 <div>
                     <label class="block font-semibold">Zone :</label>
-                    <input id="modal-zone" name="zone" type="text" class="w-full border rounded-lg px-3 py-2">
+                    <select name="zone" id="modal-zone" class="w-full p-2 border rounded-lg" required>
+                        <option value="Sahara">Sahara</option>
+                        <option value="Afrique">Afrique</option>
+                        <option value="Savane">Savane</option>
+                        <option value="Montagne">Montagne</option>
+                        <option value="Cascade">Cascade</option>
+                    </select>
                 </div>
 
                 <div class="flex justify-between pt-2">

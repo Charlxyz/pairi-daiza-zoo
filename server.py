@@ -1,3 +1,4 @@
+import random
 from flask import Flask, render_template, redirect, url_for, flash, request, jsonify, send_file
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
@@ -276,18 +277,33 @@ def animal():
 
     if zone:
         animaux = Animal.query.filter(Animal.zone.ilike(f"%{zone}%")).all()
-    else:
+        return render_template("animaux.html", animaux=animaux, zone=zone)
+
+    if current_user.is_authenticated and current_user.role in ['admin', 'soigneur']:
         animaux = Animal.query.all()
+        return render_template("animaux.html", animaux=animaux, zone=None)
 
-    return render_template("animaux.html", animaux=animaux, zone=zone)
+    categories = ['Cascade', 'Montagne', 'Afrique', 'Savane', 'Sahara']
+    resultats = []
 
-@app.route('/api/addanimal', methods=['POST', 'GET'])
+    for cat in categories:
+        count = Animal.query.filter(Animal.zone == cat).count()
+        if count > 0:
+            choix = random.randint(0, count - 1)
+            animal = (
+                Animal.query
+                .filter(Animal.zone == cat)
+                .offset(choix)
+                .first()
+            )
+            if animal:
+                resultats.append(animal)
+
+    return render_template("animaux.html", animaux=resultats, zone=None)
+
+@app.route('/api/addanimal', methods=['POST'])
 @login_required
 def add_animals():
-    if request.method == 'GET':
-        flash('Méthode non autorisée.', 'danger')
-        return redirect(url_for('animal'))
-
     if current_user.role not in ['admin', 'soigneur']:
         flash("Vous n'êtes pas autorisé à ajouter des animaux.", 'danger')
         return redirect(url_for('animal'))
@@ -320,6 +336,7 @@ def add_animals():
     )
     db.session.add(nouvel_animal)
     db.session.commit()
+    flash("Animal ajouté avec succès.", 'success')
 
     return redirect(url_for('animal'))
 
@@ -352,15 +369,12 @@ def delete_animal(animal_id):
     db.session.delete(animal)
     db.session.commit()
     flash('Animal supprimé avec succès.', 'success')
+
     return jsonify({"success": True}), 200
 
-@app.route('/api/editanimal/<int:animal_id>', methods=['POST', 'GET'])
+@app.route('/api/editanimal/<int:animal_id>', methods=['POST'])
 @login_required
 def edit_animal(animal_id):
-    if request.method == 'GET':
-        flash('Méthode non autorisée.', 'danger')
-        return redirect(url_for('animal'))
-
     if current_user.role not in ['admin', 'soigneur']:
         flash("Vous n'êtes pas autorisé à modifier cet animal.", 'danger')
         return redirect(url_for('animal'))
@@ -394,6 +408,8 @@ def edit_animal(animal_id):
         animal.zone = zone
 
     db.session.commit()
+    flash("Animal modifié avec succès.", 'success')
+
     return redirect(url_for('animal'))
     
 @app.route("/api/events")
