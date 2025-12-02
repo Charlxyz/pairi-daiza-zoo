@@ -59,6 +59,7 @@ class Event(db.Model): # Définir le modèle Event
     title = db.Column(db.String(100))
     start = db.Column(db.String(50))
     end = db.Column(db.String(50))
+    description = db.Column(db.String(1024))
 
 class Tickets(db.Model): # Définir le modèle Tickets
     id = db.Column(db.Integer, primary_key=True)
@@ -117,13 +118,12 @@ def acceuil():
 @app.route("/search")
 def search():
     query = request.args.get("q", "").strip()
-
     results = []
 
     if query:
         animals = Animal.query.filter(Animal.nom.ilike(f"%{query}%")).all()
         animals_enclos = Animal.query.filter(Animal.enclot.ilike(f"%{query}%")).all()
-        animals_zone = Animal.query.filter(Animal.zone.ilike(f"%{query}%")).all()
+        animals_zone = (db.session.query(Animal.zone).filter(Animal.zone.ilike(f"%{query}%")).distinct().all())
         events = Event.query.filter(Event.title.ilike(f"%{query}%")).all()
 
         for a in animals:
@@ -133,21 +133,22 @@ def search():
             })
 
         for e in events:
-            results.append({
-                "label": f"Événement : {e.title}",
-                "url": f"/events"
-            })
+            if e.end >= datetime.now().strftime("%Y-%m-%d"):
+                results.append({
+                    "label": f"Événement : {e.title}",
+                    "url": "/events"
+                })
 
         for a in animals_enclos:
             results.append({
-                "label": f"Enclos : {a.enclot}",
+                "label": f"Enclos : {a.enclot}. Nom: {a.nom}",
                 "url": f"/animals?enclot={a.enclot}"
             })
-        
-        for a in animals_zone:
+
+        for zone, in animals_zone:
             results.append({
-                "label": f"Zone : {a.zone}",
-                "url": f"/animals?zone={a.zone}"
+                "label": f"Zone : {zone}",
+                "url": f"/animals?zone={zone}"
             })
 
     return jsonify({"results": results})
@@ -467,8 +468,8 @@ def get_events():
         {
             "id": e.id,
             "title": e.title,
-            "start": e.start,
-            "end": e.end
+            "start": e.start.replace("T", " "),
+            "end": e.end.replace("T", " ")
         }
         for e in events
     ]
@@ -497,6 +498,33 @@ def addevent():
         return redirect(url_for('addevent'))
 
     return render_template('addevents.html')
+
+@app.route('/api/addevents', methods=['POST'])
+@login_required
+def events_api():
+    events = []
+    if request.method == "GET":
+        return jsonify(events)
+
+    if request.method == "POST":
+        data = request.get_json()
+        events.append({
+            "title": data["title"],
+            "start": data["start"],
+            "end": data["end"],
+            "description": data["description"]
+        })
+        new_event = Event(
+            title=data["title"],
+            start=data["start"],
+            end=data["end"],
+            description=data["description"]
+        )
+
+        db.session.add(new_event)
+        db.session.commit()
+        flash('Événement ajouté avec succès.', 'success')
+        return jsonify({"message": "ok"}), 201
 
 @app.route('/deletevents', methods=['POST', 'GET'])
 @login_required
@@ -550,7 +578,8 @@ def new_tickets():
 
 @app.route("/events")
 def evenement():
-    return render_template("evenement.html")
+    event = Event.query.filter(Event.end >= datetime.now().strftime("%Y-%m-%d")).all()
+    return render_template("evenement.html", event=event)
 
 @app.route("/soins")
 @login_required

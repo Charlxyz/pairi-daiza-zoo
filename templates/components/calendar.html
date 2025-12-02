@@ -1,32 +1,51 @@
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const calendarEl = document.getElementById("calendar");
+document.addEventListener("DOMContentLoaded", function () {
+  const calendarEl = document.getElementById("calendar");
 
-      const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: "dayGridMonth",
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: "dayGridMonth",
 
-        events: "/api/events",   // récupération auto depuis Flask
+    events: "/api/events",   // récupération auto depuis Flask
 
-        selectable: true,
-        select: function (info) {
-          const title = prompt("Titre de l'événement :");
+    selectable: true,
+    select: function (info) {
 
-          if (title) {
-            fetch("/api/events", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                title: title,
-                start: info.startStr,
-                end: info.endStr
-              })
-            }).then(() => {
-              calendar.refetchEvents(); // recharge les events
-            });
-          }
-        }
+      const title = prompt("Titre de l'événement :");
+      if (!title) return;
+      
+      const startDate = prompt("Date de début (YYYY-MM-DD) :", info.startStr.split("T")[0]);
+      if (!startDate) return;
+
+      const startTime = prompt("Heure de début (HH:MM) :", "09:00");
+
+      const endDate = prompt("Date de fin (YYYY-MM-DD) :", info.endStr.split("T")[0]);
+      if (!endDate) return;
+
+      const endTime = prompt("Heure de fin (HH:MM) :", "10:00");
+      
+      const description = prompt("Description :");
+
+      const start = startDate + "T" + (startTime || "00:00");
+      const end = endDate + "T" + (endTime || "00:00");
+
+      // Envoi à l'API Flask
+      fetch("/api/addevents", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: title,
+          start: start,
+          end: end,
+          description: description
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        window.location.href = "/events";  
       });
+    }
+  });
 
-      calendar.render();
-    });
-  </script>
+  calendar.render();
+});
+</script>
