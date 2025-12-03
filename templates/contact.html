@@ -113,14 +113,20 @@ emailjs.init({
 
 document.getElementById("contactForm").addEventListener("submit", function(e) {
     e.preventDefault();
-
     emailjs.send("service_y5fn8rf", "template_el8c2pa", {
         user_name: this.nom.value,
         user_email: this.email.value,
         user_sujet: this.sujet.value,
         user_message: this.message.value
     })
-    .then(() => console.log("OK"))
+    .then(() => {
+        fetch("/contact/confirm", {
+            method: "POST"
+        })
+        .then(() => {
+            window.location.reload();
+        });
+    })
     .catch(err => console.error("EmailJS error", err));
 });
 </script>

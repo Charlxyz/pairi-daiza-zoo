@@ -688,6 +688,11 @@ def map():
 def contact():
     return render_template("contact.html")
 
+@app.route('/contact/confirm', methods=['POST'])
+def contact_confirm():
+    flash("Votre message a bien été envoyé. Merci de nous avoir contactés.", "success")
+    return {"status": "ok"}
+
 @app.route("/faq")
 def faq():
     return render_template("faq.html")
