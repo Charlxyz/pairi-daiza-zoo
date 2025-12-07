@@ -1,6 +1,55 @@
+<!-- Modal for event details -->
+<div id="event-modal" class="fixed inset-0 hidden items-center justify-center z-50">
+  <div id="event-modal-overlay" class="absolute inset-0 bg-black/50"></div>
+  <div class="relative bg-white rounded-lg shadow-lg max-w-2xl w-full z-10 p-6 mx-4">
+    <button id="event-modal-close" class="absolute top-3 right-3 text-gray-600 hover:text-gray-800 text-2xl leading-none">&times;</button>
+    <h2 id="event-modal-title" class="text-2xl font-bold mb-2"></h2>
+    <div id="event-modal-times" class="text-sm text-gray-600 mb-4"></div>
+    <div id="event-modal-description" class="text-gray-800 whitespace-pre-wrap"></div>
+  </div>
+</div>
+
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const calendarEl = document.getElementById("calendar");
+
+    const modal = document.getElementById('event-modal');
+    const modalOverlay = document.getElementById('event-modal-overlay');
+    const modalClose = document.getElementById('event-modal-close');
+    const modalTitle = document.getElementById('event-modal-title');
+    const modalTimes = document.getElementById('event-modal-times');
+    const modalDescription = document.getElementById('event-modal-description');
+
+    function showModal(event) {
+      modalTitle.textContent = event.title || '';
+
+      const opts = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+      let start = event.start ? new Date(event.start) : null;
+      let end = event.end ? new Date(event.end) : null;
+      if (start && end) {
+        modalTimes.textContent = `${start.toLocaleString('fr-FR', opts)} — ${end.toLocaleString('fr-FR', opts)}`;
+      } else if (start) {
+        modalTimes.textContent = `${start.toLocaleString('fr-FR', opts)}`;
+      } else {
+        modalTimes.textContent = '';
+      }
+
+      modalDescription.textContent = event.description || '';
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function hideModal() {
+      modal.classList.remove('flex');
+      modal.classList.add('hidden');
+    }
+
+    modalOverlay.addEventListener('click', hideModal);
+    modalClose.addEventListener('click', hideModal);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') hideModal();
+    });
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: "dayGridMonth",
@@ -9,13 +58,17 @@
         url: "/api/events",
         method: "GET",
         failure: function () {
-          alert("Impossible de charger les événements.");
+          console.error("Impossible de charger les événements.");
         },
       },
       eventClick: function (info) {
-        if (info.event.extendedProps.description) {
-          alert(info.event.extendedProps.description);
-        }
+        const ev = {
+          title: info.event.title || (info.event.extendedProps && info.event.extendedProps.title) || '',
+          start: info.event.start || (info.event.extendedProps && info.event.extendedProps.start) || null,
+          end: info.event.end || (info.event.extendedProps && info.event.extendedProps.end) || null,
+          description: info.event.extendedProps && info.event.extendedProps.description ? info.event.extendedProps.description : ''
+        };
+        showModal(ev);
       },
     });
 
