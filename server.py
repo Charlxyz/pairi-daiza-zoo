@@ -550,7 +550,7 @@ def new_tickets():
 
 @app.route("/events")
 def evenement():
-    event = Event.query.filter(Event.end >= datetime.now().strftime("%Y-%m-%d")).all()
+    event = Event.query.filter(Event.end >= datetime.now().strftime("%Y-%m-%d")).order_by(Event.start).limit(6).all()
     return render_template("evenement.html", event=event)
 
 @app.route("/soins")
