@@ -1,81 +1,24 @@
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-  const calendarEl = document.getElementById("calendar");
+  document.addEventListener("DOMContentLoaded", function () {
+    const calendarEl = document.getElementById("calendar");
 
-  const canManageEvents = {{ 'true' if current_user.is_authenticated and current_user.role in ['admin', 'soigneur'] else 'false' }};
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: "dayGridMonth",
 
-  const calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: "dayGridMonth",
-
-    events: "/api/events",
-
-    selectable: canManageEvents,
-    select: function (info) {
-      if (!canManageEvents) return;
-
-      const title = prompt("Titre de l'événement :");
-      if (!title) return;
-
-      const startDate = prompt("Date de début (YYYY-MM-DD) :", info.startStr.split("T")[0]);
-      if (!startDate) return;
-
-      const startTime = prompt("Heure de début (HH:MM) :", "09:00");
-
-      const endDate = prompt("Date de fin (YYYY-MM-DD) :", info.endStr.split("T")[0]);
-      if (!endDate) return;
-
-      const endTime = prompt("Heure de fin (HH:MM) :", "10:00");
-
-      const description = prompt("Description :");
-
-      const start = startDate + "T" + (startTime || "00:00");
-      const end = endDate + "T" + (endTime || "00:00");
-
-      fetch("/api/addevents", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: title,
-          start: start,
-          end: end,
-          description: description
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === "success") {
-          window.location.reload();
-        } else {
-          alert("Erreur : " + data.message);
-          window.location.reload();
+      events: {
+        url: "/api/events",
+        method: "GET",
+        failure: function () {
+          alert("Impossible de charger les événements.");
+        },
+      },
+      eventClick: function (info) {
+        if (info.event.extendedProps.description) {
+          alert(info.event.extendedProps.description);
         }
-      });
-    },
+      },
+    });
 
-    eventClick: function(info) {
-      if (!canManageEvents) return;
-      
-      if (!confirm("Voulez-vous vraiment supprimer cet événement ?")) return;
-
-      fetch("/deletevents", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          event_ids: info.event.id
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === "success") {
-          window.location.reload();
-        } else {
-          alert("Erreur : " + data.message);
-          window.location.reload();
-        }
-      });
-    }
+    calendar.render();
   });
-
-  calendar.render();
-});
 </script>
