@@ -43,7 +43,7 @@
                     {% for e in event %}
                     <div class="bg-green-50 rounded-2xl p-6 shadow">
                         <h3 class="text-xl font-semibold text-green-700">{{ e.title }}</h3>
-                        <p class="text-gray-700 mt-2">{{ e.description }}</p>
+                        <p class="text-gray-700 mt-2">{{ e.description or "Aucune description" }}</p>
                         <p class="text-gray-600 mt-3 text-sm">{{ e.start.replace("T", " à ") }} - {{ e.end.replace("T", " à ") }}</p>
                     </div>
                     {% endfor %}
