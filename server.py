@@ -469,7 +469,8 @@ def get_events():
             "id": e.id,
             "title": e.title,
             "start": e.start.replace("T", " "),
-            "end": e.end.replace("T", " ")
+            "end": e.end.replace("T", " "),
+            "description": e.description or ""
         }
         for e in events
     ]
@@ -486,12 +487,13 @@ def addevent():
         title = request.form.get('title')
         start = request.form.get('start')
         end = request.form.get('end')
+        description = request.form.get('description')
 
         if not title or not start or not end:
             flash('Tous les champs sont requis.', 'danger')
             return redirect(url_for('addevent'))
 
-        new_event = Event(title=title, start=start, end=end)
+        new_event = Event(title=title, start=start, end=end, description=description)
         db.session.add(new_event)
         db.session.commit()
         flash('Événement ajouté avec succès.', 'success')
@@ -499,58 +501,25 @@ def addevent():
 
     return render_template('addevents.html')
 
-@app.route('/api/addevents', methods=['POST'])  
-def events_api():
-    if current_user.is_authenticated == False:
-        flash("Vous devez être connecté pour ajouté un évènement.", 'danger')
-        return jsonify({"status": "error", "message": "unauthenticated"}), 401
-    if current_user.role not in ['admin', 'soigneur']:
-        flash("Vous n'êtes pas autorisé à ajouter des événements.", 'danger')
-        return jsonify({"status": "error", "message": "unauthorized"}), 403
-    events = []
-    if request.method == "GET":
-        return jsonify(events)
-
-    if request.method == "POST":
-        data = request.get_json()
-        events.append({
-            "title": data["title"],
-            "start": data["start"],
-            "end": data["end"],
-            "description": data["description"]
-        })
-        new_event = Event(
-            title=data["title"],
-            start=data["start"],
-            end=data["end"],
-            description=data["description"]
-        )
-
-        db.session.add(new_event)
-        db.session.commit()
-        flash('Événement ajouté avec succès.', 'success')
-        return jsonify({"message": "ok", "status": "success"}), 201
-
 @app.route('/deletevents', methods=['POST'])
+@login_required
 def deletevents():
-    if current_user.is_authenticated == False:
-        flash("Vous devez être connecté pour accéder à cette page.", 'danger')
-        return jsonify({"status": "error", "message": "unauthenticated"}), 401
     if current_user.role not in ['admin', 'soigneur']:
         flash("Vous n'êtes pas autorisé à supprimer des événements.", 'danger')
-        return jsonify({"status": "error", "message": "unauthorized"}), 403
-    
+        return redirect(url_for('addevent'))
+
     event_ids = request.form.getlist('event_ids')
-    if event_ids:
-        for event_id in event_ids:
-            event = Event.query.get(int(event_id))
-            if event:
-                db.session.delete(event)
-                flash(f'{len(event_ids)} événement(s) supprimé(s) avec succès.', 'success')
-        db.session.commit()
-        return jsonify({"status": "success", "deleted": len(event_ids)})
-    
-    return jsonify({"status": "error", "message": "no event"}), 400
+    if not event_ids:
+        flash('Aucun événement sélectionné pour la suppression.', 'danger')
+        return redirect(url_for('addevent'))
+
+    for event_id in event_ids:
+        event = db.session.get(Event, event_id)
+        if event:
+            db.session.delete(event)
+    db.session.commit()
+    flash(f"{len(event_ids)} événement(s) supprimé(s) avec succès.", 'success')
+    return redirect(url_for('addevent'))
 
 @app.route("/api/newtickets", methods=['POST', 'GET'])
 @login_required
