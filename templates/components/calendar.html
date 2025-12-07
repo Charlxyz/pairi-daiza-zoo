@@ -2,13 +2,17 @@
 document.addEventListener("DOMContentLoaded", function () {
   const calendarEl = document.getElementById("calendar");
 
+  const canManageEvents = {{ 'true' if current_user.is_authenticated and current_user.role in ['admin', 'soigneur'] else 'false' }};
+
   const calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
 
     events: "/api/events",
 
-    selectable: true,
+    selectable: canManageEvents,
     select: function (info) {
+      if (!canManageEvents) return;
+
       const title = prompt("Titre de l'événement :");
       if (!title) return;
 
@@ -38,13 +42,19 @@ document.addEventListener("DOMContentLoaded", function () {
         })
       })
       .then(res => res.json())
-      .then(() => window.location.href = "/events");
+      .then(data => {
+        if (data.status === "success") {
+          window.location.reload();
+        } else {
+          alert("Erreur : " + data.message);
+          window.location.reload();
+        }
+      });
     },
 
-    // -------------------------------------------
-    // SUPPRESSION AVEC RECHARGEMENT DE LA PAGE
-    // -------------------------------------------
     eventClick: function(info) {
+      if (!canManageEvents) return;
+      
       if (!confirm("Voulez-vous vraiment supprimer cet événement ?")) return;
 
       fetch("/deletevents", {
@@ -57,9 +67,10 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(res => res.json())
       .then(data => {
         if (data.status === "success") {
-          window.location.reload();  // recharge pour mettre à jour l'affichage
+          window.location.reload();
         } else {
           alert("Erreur : " + data.message);
+          window.location.reload();
         }
       });
     }

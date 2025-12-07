@@ -499,9 +499,14 @@ def addevent():
 
     return render_template('addevents.html')
 
-@app.route('/api/addevents', methods=['POST'])
-@login_required
+@app.route('/api/addevents', methods=['POST'])  
 def events_api():
+    if current_user.is_authenticated == False:
+        flash("Vous devez être connecté pour ajouté un évènement.", 'danger')
+        return jsonify({"status": "error", "message": "unauthenticated"}), 401
+    if current_user.role not in ['admin', 'soigneur']:
+        flash("Vous n'êtes pas autorisé à ajouter des événements.", 'danger')
+        return jsonify({"status": "error", "message": "unauthorized"}), 403
     events = []
     if request.method == "GET":
         return jsonify(events)
@@ -524,11 +529,13 @@ def events_api():
         db.session.add(new_event)
         db.session.commit()
         flash('Événement ajouté avec succès.', 'success')
-        return jsonify({"message": "ok"}), 201
+        return jsonify({"message": "ok", "status": "success"}), 201
 
 @app.route('/deletevents', methods=['POST'])
-@login_required
 def deletevents():
+    if current_user.is_authenticated == False:
+        flash("Vous devez être connecté pour accéder à cette page.", 'danger')
+        return jsonify({"status": "error", "message": "unauthenticated"}), 401
     if current_user.role not in ['admin', 'soigneur']:
         flash("Vous n'êtes pas autorisé à supprimer des événements.", 'danger')
         return jsonify({"status": "error", "message": "unauthorized"}), 403
