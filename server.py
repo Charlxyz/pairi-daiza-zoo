@@ -526,16 +526,11 @@ def events_api():
         flash('Événement ajouté avec succès.', 'success')
         return jsonify({"message": "ok"}), 201
 
-@app.route('/deletevents', methods=['POST', 'GET'])
+@app.route('/deletevents', methods=['POST'])
 @login_required
 def deletevents():
-    if request.method == 'GET':
-        flash('Méthode non autorisée.', 'danger')
-        return redirect(url_for('addevent'))
-
     if current_user.role not in ['admin', 'soigneur']:
-        flash("Vous n'êtes pas autorisé à supprimer des événements.", 'danger')
-        return redirect(url_for('addevent'))
+        return jsonify({"status": "error", "message": "unauthorized"}), 403
     
     event_ids = request.form.getlist('event_ids')
     if event_ids:
@@ -543,11 +538,11 @@ def deletevents():
             event = Event.query.get(int(event_id))
             if event:
                 db.session.delete(event)
+                flash(f'{len(event_ids)} événement(s) supprimé(s) avec succès.', 'success')
         db.session.commit()
-        flash(f'{len(event_ids)} événement(s) supprimé(s) avec succès.', 'success')
-    else:
-        flash('Aucun événement sélectionné.', 'warning')
-    return redirect(url_for('addevent'))
+        return jsonify({"status": "success", "deleted": len(event_ids)})
+    
+    return jsonify({"status": "error", "message": "no event"}), 400
 
 @app.route("/api/newtickets", methods=['POST', 'GET'])
 @login_required
