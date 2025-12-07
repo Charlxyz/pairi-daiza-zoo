@@ -4,22 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Événements</title>
-
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-  <!-- FullCalendar -->
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-
   <link rel="icon" href="../static/images/logo2.png" type="image/x-icon">
+  {% include '/components/calendar.html' %}
 </head>
 
 <body class="bg-[#EDE3E3] w-full min-h-screen">
 
   {% include '/components/nav.html' %}
 
-  <!-- HEADER -->
   <div class="relative w-full h-[50vh]">
       <img src="../static/images/Header_about.png" class="absolute inset-0 w-full h-full object-cover">
       <div class="absolute inset-0 bg-black/40"></div>
@@ -29,77 +25,35 @@
       </div>
   </div>
 
-  <!-- CONTENU -->
-    <section class="w-full py-20 px-5 flex justify-center">
-        <div class="bg-white w-full max-w-5xl p-12 rounded-3xl shadow-2xl border border-gray-300">
-            <h2 class="text-4xl font-bold text-green-700 text-center mb-10">Calendrier des activités</h2>
-            <div class="flex justify-center">
-                <div id="calendrierEvent" class="w-[700px] h-[650px] bg-white p-4 rounded-lg shadow">
-                    <div id="calendar"></div>
-                </div>
-            </div>
+  <section class="w-full py-20 px-5 flex justify-center">
+      <div class="bg-white w-full max-w-5xl p-12 rounded-3xl shadow-2xl border border-gray-300">
+          <h2 class="text-4xl font-bold text-green-700 text-center mb-10">Calendrier des activités</h2>
+          <div class="flex justify-center">
+              <div id="calendrierEvent" class="w-[700px] h-[650px] bg-white p-4 rounded-lg shadow">
+                  <div id="calendar"></div>
+              </div>
+          </div>
 
-            {%  if event|length == 0 %}
-                <p class="text-center text-gray-600 mt-10">Aucun événement à venir pour le moment. Revenez bientôt pour découvrir nos prochaines activités !</p>
-            {% else %}
-                <div class="mt-16">
-                    <h2 class="text-3xl font-bold text-green-700 text-center">À ne pas manquer</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
-                        {% for e in event %}
-                        <div class="bg-green-50 rounded-2xl p-6 shadow">
-                            <h3 class="text-xl font-semibold text-green-700">{{ e.title }}</h3>
-                            <p class="text-gray-700 mt-2">{{ e.description }}</p>
-                            <p class="text-gray-600 mt-3 text-sm">{{ e.start.replace("T", " à ") }} - {{ e.end.replace("T", " à ") }}</p>
-                        </div>
-                        {% endfor %}
+          {%  if event|length == 0 %}
+              <p class="text-center text-gray-600 mt-10">Aucun événement à venir pour le moment. Revenez bientôt pour découvrir nos prochaines activités !</p>
+          {% else %}
+            <div class="mt-16">
+                <h2 class="text-3xl font-bold text-green-700 text-center">À ne pas manquer</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+                    {% for e in event %}
+                    <div class="bg-green-50 rounded-2xl p-6 shadow">
+                        <h3 class="text-xl font-semibold text-green-700">{{ e.title }}</h3>
+                        <p class="text-gray-700 mt-2">{{ e.description }}</p>
+                        <p class="text-gray-600 mt-3 text-sm">{{ e.start.replace("T", " à ") }} - {{ e.end.replace("T", " à ") }}</p>
                     </div>
-                {% endif %}
-            </div>
-        </div>
-    </section>
+                    {% endfor %}
+                </div>
+            {% endif %}
+          </div>
+      </div>
+  </section>
 
   {% include '/components/flash.html' %}
-
-  <!-- SCRIPT FULLCALENDAR -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const calendarEl = document.getElementById("calendar");
-
-        const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: "dayGridMonth",
-
-            // Récupération API Flask
-            events: "/api/events",
-
-            eventClick: function(info) {
-                const eventId = info.event.id;
-
-                if (confirm("Voulez-vous supprimer cet événement ?")) {
-                    fetch("/deletevents", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/x-www-form-urlencoded"
-                        },
-                        body: `event_ids=${eventId}`
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.status === "success") {
-                            window.location.reload();
-                        } else {
-                            alert("Erreur : " + data.message);
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Erreur JS :", err);
-                    }); 
-                }
-            }
-        });
-
-        calendar.render();
-    });
-  </script>
 
 </body>
 </html>

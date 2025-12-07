@@ -530,6 +530,7 @@ def events_api():
 @login_required
 def deletevents():
     if current_user.role not in ['admin', 'soigneur']:
+        flash("Vous n'êtes pas autorisé à supprimer des événements.", 'danger')
         return jsonify({"status": "error", "message": "unauthorized"}), 403
     
     event_ids = request.form.getlist('event_ids')
