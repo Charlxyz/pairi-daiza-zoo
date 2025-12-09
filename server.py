@@ -674,6 +674,11 @@ def page_not_found(e):
     flash("La page que vous recherchez n'existe pas.", 'erreur')
     return render_template("404.html")
 
+@app.errorhandler(405)
+def page_not_found(e):
+    flash("Méthode non aprouvé.", 'erreur')
+    return render_template("404.html")
+
 # Création des tables de la base de donnee
 with app.app_context():
     db.create_all()  # Crée les tables si elles n'existent pas
